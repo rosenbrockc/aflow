@@ -1,0 +1,13 @@
+language: python
+cache: pip
+python:
+  - "2.7"
+  - "3.5"
+# command to install dependencies
+install:
+  - pip install --upgrade -r requirements.txt
+  - pip install --upgrade tox-travis
+  - pip install --upgrade .
+# command to run tests
+script: tox
+after_success: coveralls

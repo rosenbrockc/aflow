@@ -1,0 +1,6 @@
+argparse
+pypandoc
+termcolor
+numpy
+matplotlib
+pyserial
