@@ -1,0 +1,1888 @@
+"""Provides class and methods for abstracting the data from AFLOW into
+python.
+"""
+class Entry(object):
+    """Encapsulates the result of a single material entry in the AFLOW
+    database.
+
+    .. note:: Additional keyword values will be loaded lazily as
+      requested (using additional HTTP requests). For optimization, it
+      is recommended to request *all* known keywords up front.
+
+    Args:
+        kwargs (dict): of key-value pairs obtained from the initial
+          AFLUX request.
+
+    Attributes:
+        attributes (dict): of key-value pairs requested for the given
+          material. This will only be identical to the passed in the
+          keyword arguments if no additional property requests have been
+          made.
+        raw (dict): original response dictionary (without any cast
+          values).
+    """
+    def __init__(self, **kwargs):
+        from aflow.caster import cast
+        import aflow.keywords as kw
+        self.attributes = {}
+        for attr, value in kwargs.items():
+            #Set the default raw values 
+            self.attributes[attr] = value
+            clsname = "_{}".format(attr)
+            if hasattr(kw, clsname):
+                cls = getattr(kw, clsname)
+                atype = getattr(cls, "atype")
+                self.attributes[attr] = cast(atype, attr, value)
+                    
+        self.raw = kwargs
+
+    def _lazy_load(self, keyword):
+        """Loads the value of the specified keyword via HTTP request against the
+        AFLUX API, if it isn't already present on the object.
+
+        Args:
+            keyword (str): name of the keyword to retrieve for this entry.
+        """
+        if keyword not in self.keywords:
+            return
+        
+        if keyword in self.attributes:
+            return self.attributes[keyword]
+        else:
+            import requests
+            import json
+            url = "http://{0}?{1}".format(self.keywords["aurl"], keyword)
+            r = requests.get(url)
+
+            #We need to coerce the string returned from aflow into the
+            #appropriate python format.
+            from aflow.caster import cast
+            result = cast(r.text)
+            self.attributes[keyword] = result
+            return result        
+        
+    def ael_bulk_modulus_reuss(self):
+        """AEL Reuss bulk modulus (`optional`). Units: `GPa`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Returns the bulk modulus as calculated using the Reuss method with AEL.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `ael_bulk_modulus_reuss=105.315`
+        """
+        return self._lazy_load("ael_bulk_modulus_reuss")    
+        
+    def eentropy_cell(self):
+        """unit cell electronic entropy (`optional`). Units: `eV/atom`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Returns the electronic entropy of the unit cell used to converge the ab initio calculation (smearing).
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `eentropy_cell=0.0011`
+        """
+        return self._lazy_load("eentropy_cell")    
+        
+    def volume_atom(self):
+        """atomic volume (`mandatory`). Units: `&Aring;<sup>3</sup>/atom`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`forces`
+          - :meth:`kpoints`
+          - :meth:`pressure_residual`
+          - :meth:`stress_tensor`
+
+        Returns:
+            float: Returns the volume per atom in the unit cell.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `volume_atom=100.984`
+        """
+        return self._lazy_load("volume_atom")    
+        
+    def PV_atom(self):
+        """atomic pressure*volume (`mandatory`). Units: `eV/atom`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Pressure multiplied by volume of the atom.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `PV_atom=12.13`
+        """
+        return self._lazy_load("PV_atom")    
+        
+    def forces(self):
+        """Quantum Forces (`optional`). Units: `eV/&Aring;`.
+        
+        .. warning:: This keyword is still listed as development level. Use it
+          knowing that it is subject to change or removal.
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            numpy.ndarray: Final quantum mechanical forces (Fi,Fj,Fk) in the notation of the code.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `forces=0,-0.023928,0.000197;0,0.023928,-0.000197;...`
+        """
+        return self._lazy_load("forces")    
+        
+    def aflowlib_date(self):
+        """material generation date (`optional`). Units: ``.
+        
+        
+        
+
+        Returns:
+            str: Returns the date of the AFLOW post-processor which generated the entry for the library.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `aflowlib_date=20140204_13:10:39_GMT-5`
+        """
+        return self._lazy_load("aflowlib_date")    
+        
+    def ael_elastic_anistropy(self):
+        """AEL elastic anistropy (`optional`). Units: ``.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Returns the elastic anistropy as calculated with AEL.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `ael_elastic_anistropy=0.0008165`
+        """
+        return self._lazy_load("ael_elastic_anistropy")    
+        
+    def spin_cell(self):
+        """unit cell spin polarization (`mandatory`). Units: `&mu;<sub>B</sub>`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: For spin polarized calculations, the total magnetization of the cell.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `spin_cell=2.16419`
+        """
+        return self._lazy_load("spin_cell")    
+        
+    def files(self):
+        """I/O files (`conditional`). Units: ``.
+        
+        
+        
+
+        Returns:
+            list: Provides access to the input and output files used in the simulation (provenance data).
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `files=Bi_dRh_pv.33.cif,Bi_dRh_pv.33.png,CONTCAR.relax,CONTCAR.relax1,`
+        """
+        return self._lazy_load("files")    
+        
+    def bader_atomic_volumes(self):
+        """atomic volume per atom (`optional`). Units: `&Aring;<sup>3</sup>`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            list: Returns the volume of each atom of the primitive cell as calculated by the Bader Atoms in Molecules Analysis. This volume encapsulates the electron density associated with each atom above a threshold of 0.0001 electrons.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `bader_atomic_volumes=15.235,12.581,13.009`
+        """
+        return self._lazy_load("bader_atomic_volumes")    
+        
+    def composition(self):
+        """composition (`optional`). Units: ``.
+        
+        
+        
+
+        Returns:
+            list: Returns a comma delimited composition description of the structure entry in the calculated cell.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `composition=2,6,6`
+        """
+        return self._lazy_load("composition")    
+        
+    def calculation_memory(self):
+        """used RAM (`optional`). Units: `Megabytes`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: The maximum memory used for the calculation.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `calculation_memory=32`
+        """
+        return self._lazy_load("calculation_memory")    
+        
+    def calculation_cores(self):
+        """used CPU cores (`optional`). Units: ``.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Number of processors/cores used for the calculation.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `calculation_cores=32`
+        """
+        return self._lazy_load("calculation_cores")    
+        
+    def species_pp_version(self):
+        """pseudopotential species/version (`mandatory`). Units: ``.
+        
+        
+        
+
+        Returns:
+            list: Species of the atoms, pseudopotentials species, and pseudopotential versions.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `species_pp_version=Y,Zn,Zr`
+        """
+        return self._lazy_load("species_pp_version")    
+        
+    def entropic_temperature(self):
+        """entropic temperature (`mandatory`). Units: `Kelvin`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Returns the entropic temperature for the structure.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `entropic_temperature=1072.1`
+        """
+        return self._lazy_load("entropic_temperature")    
+        
+    def agl_bulk_modulus_static_300K(self):
+        """AGL static bulk modulus 300K (`optional`). Units: `GPa`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Returns the static bulk modulus at 300K as calculated with AGL.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `agl_bulk_modulus_static_300K=99.6`
+        """
+        return self._lazy_load("agl_bulk_modulus_static_300K")    
+        
+    def aflowlib_entries(self):
+        """aflowlib entries (`conditional`). Units: ``.
+        
+        
+        
+
+        Returns:
+            list: For projects and set-layer entries, aflowlib_entries lists the available sub-entries which are associated with the $aurl of the subdirectories.  By parsing $aurl/?aflowlib_entries (containing $aurl/aflowlib_entries_number entries) the user finds further locations to interrogate.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `aflowlib_entries=AgAl,AgAs,AgAu,AgB_h,AgBa_sv,AgBe_sv,AgBi_d,AgBr,AgCa_sv,...`
+        """
+        return self._lazy_load("aflowlib_entries")    
+        
+    def ael_bulk_modulus_voigt(self):
+        """AEL Voigt bulk modulus (`optional`). Units: `GPa`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Returns the bulk modulus as calculated using the Voigt method with AEL.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `ael_bulk_modulus_voiht=105.315`
+        """
+        return self._lazy_load("ael_bulk_modulus_voigt")    
+        
+    def PV_cell(self):
+        """unit cell pressure*volume (`mandatory`). Units: `eV`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Pressure multiplied by volume of the unit cell.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `PV_cell=12.13`
+        """
+        return self._lazy_load("PV_cell")    
+        
+    def ael_shear_modulus_voigt(self):
+        """AEL Voigt shear modulus (`optional`). Units: `GPa`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Returns the shear modulus as calculated using the Voigt method with AEL.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `ael_shear_modulus_voigt=73.799`
+        """
+        return self._lazy_load("ael_shear_modulus_voigt")    
+        
+    def agl_heat_capacity_Cv_300K(self):
+        """AGL heat capacity Cv (`optional`). Units: `kB/cell`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Returns the heat capacity at constant volume as calculated with AGL at 300K.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `agl_heat_capacity_Cv_300K=4.901`
+        """
+        return self._lazy_load("agl_heat_capacity_Cv_300K")    
+        
+    def lattice_system_orig(self):
+        """original lattice system (`mandatory`). Units: ``.
+        
+        
+        
+
+        Returns:
+            str: Return the lattice system and lattice variation (Brillouin zone) of the original-unrelaxed structure before the calculation.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `lattice_system_orig=rhombohedral`
+        """
+        return self._lazy_load("lattice_system_orig")    
+        
+    def keywords(self):
+        """Title (`mandatory`). Units: ``.
+        
+        
+        
+
+        Returns:
+            list: This includes the list of keywords available in the entry, separated by commas.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `keywords=aurl,auid,loop,code,compound,prototype,nspecies,natoms,...`
+        """
+        return self._lazy_load("keywords")    
+        
+    def energy_cutoff(self):
+        """energy cutoff (`optional`). Units: `eV`.
+        
+        
+        
+
+        Returns:
+            list: Set of energy cut-offs used during the various steps of the calculations.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `energy_cutoff=384.1,384.1,384.1`
+        """
+        return self._lazy_load("energy_cutoff")    
+        
+    def Bravais_lattice_relax(self):
+        """relaxed bravais lattice (`optional`). Units: ``.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`forces`
+          - :meth:`kpoints`
+          - :meth:`stress_tensor`
+
+        Returns:
+            str: Returns the Bravais lattice of the original relaxed structure after the calculation.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `Bravais_lattice_relax=MCLC`
+        """
+        return self._lazy_load("Bravais_lattice_relax")    
+        
+    def enthalpy_atom(self):
+        """atomic enthalpy (`mandatory`). Units: `eV/atom`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+          - :meth:`pressure_residual`
+          - :meth:`stress_tensor`
+
+        Returns:
+            float: Returns the enthalpy per atom- the value of enthalpy_cell/N).
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `enthalpy_atom=-82.1656`
+        """
+        return self._lazy_load("enthalpy_atom")    
+        
+    def lattice_variation_orig(self):
+        """original lattice variation (`mandatory`). Units: ``.
+        
+        
+        
+
+        Returns:
+            str: Return the lattice system and lattice variation (Brillouin zone) of the original-unrelaxed structure before the calculation.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `lattice_variation_orig=rhombohedral`
+        """
+        return self._lazy_load("lattice_variation_orig")    
+        
+    def aurl(self):
+        """AFLOWLIB Uniform Resource Locator (`mandatory`). Units: ``.
+        
+        
+        
+
+        Returns:
+            str: AFLOWLIB Uniform Resource Locator returns the AURL of the entry.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `aurl=aflowlib.duke.edu:AFLOWDATA/LIB3_RAW/Bi_dRh_pvTi_sv/T0003.ABC:LDAU2`
+        """
+        return self._lazy_load("aurl")    
+        
+    def pressure(self):
+        """external pressure (`mandatory`). Units: `kbar`.
+        
+        
+        
+
+        Returns:
+            float: Returns the target pressure selected for the simulation.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `pressure=10.0`
+        """
+        return self._lazy_load("pressure")    
+        
+    def loop(self):
+        """process category (`optional`). Units: ``.
+        
+        
+        
+
+        Returns:
+            list: Informs the user of the type of post-processing that was performed.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `loop=thermodynamics,bands,magnetic`
+        """
+        return self._lazy_load("loop")    
+        
+    def geometry(self):
+        """unit cell basis (`mandatory`). Units: `&Aring;`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+          - :meth:`pressure_residual`
+          - :meth:`stress_tensor`
+
+        Returns:
+            list: Returns geometrical data describing the unit cell in the usual a,b,c,alpha,beta,gamma notation.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `geometry=18.82,18.82,18.82,32.41,32.41,32.41`
+        """
+        return self._lazy_load("geometry")    
+        
+    def energy_atom(self):
+        """atomic energy (`mandatory`). Units: `eV/atom`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+          - :meth:`pressure_residual`
+          - :meth:`stress_tensor`
+
+        Returns:
+            float: Returns the total ab initio energy per atom- the value of energy_cell/$N$).
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `energy_atom=-82.1656`
+        """
+        return self._lazy_load("energy_atom")    
+        
+    def node_CPU_Model(self):
+        """CPU model (`optional`). Units: ``.
+        
+        
+        
+
+        Returns:
+            str: Information about the CPU model in the node/cluster where the calculation was performed.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `node_CPU_Model=12`
+        """
+        return self._lazy_load("node_CPU_Model")    
+        
+    def stoichiometry(self):
+        """unit cell stoichiometry (`mandatory`). Units: ``.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            list: Similar to composition, returns a comma delimited stoichiometry description of the structure entry in the calculated cell.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `stoichiometry=0.5,0.25,0.25`
+        """
+        return self._lazy_load("stoichiometry")    
+        
+    def sponsor(self):
+        """sponsor (`optional`). Units: ``.
+        
+        .. warning:: This keyword is still listed as development level. Use it
+          knowing that it is subject to change or removal.
+        
+
+        Returns:
+            list: Returns information about funding agencies and other sponsors for the data.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `sponsor=DOD_N000141310635,NIST_70NANB12H163`
+        """
+        return self._lazy_load("sponsor")    
+        
+    def sg2(self):
+        """refined compound space group (`mandatory`). Units: ``.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`forces`
+          - :meth:`kpoints`
+          - :meth:`stress_tensor`
+
+        Returns:
+            list: Evolution of the space group of the compound.  The first, second and third string represent space group name/number before the first, after the first, and after the last relaxation of the calculation.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `sg2=Fm-3m#225,Fm-3m#225,Fm-3m#225`
+        """
+        return self._lazy_load("sg2")    
+        
+    def species(self):
+        """atomic species (`mandatory`). Units: ``.
+        
+        
+        
+
+        Returns:
+            list: Species of the atoms in this material.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `species=Y,Zn,Zr`
+        """
+        return self._lazy_load("species")    
+        
+    def valence_cell_std(self):
+        """unit cell standard valence (`mandatory`). Units: ``.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Returns standard valence, the maximum number of univalent atoms that may combine with the atoms.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `valence_cell_std=22`
+        """
+        return self._lazy_load("valence_cell_std")    
+        
+    def Egap(self):
+        """energy gap (`mandatory`). Units: `eV`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Band gap calculated with the approximations and pseudopotentials described by other keywords.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `Egap=2.5`
+        """
+        return self._lazy_load("Egap")    
+        
+    def data_api(self):
+        """REST API version (`mandatory`). Units: ``.
+        
+        
+        
+
+        Returns:
+            str: AFLOWLIB version of the entry, API.}
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `data_api=aapi1.0`
+        """
+        return self._lazy_load("data_api")    
+        
+    def species_pp(self):
+        """species pseudopotential(s) (`mandatory`). Units: ``.
+        
+        
+        
+
+        Returns:
+            list: Pseudopotentials of the atomic species.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `species_pp=Y,Zn,Zr`
+        """
+        return self._lazy_load("species_pp")    
+        
+    def spinD_magmom_orig(self):
+        """No schema information available. (`unknown`). Units: ``.
+        
+        .. warning:: This keyword is still listed as development level. Use it
+          knowing that it is subject to change or removal.
+        
+
+        Returns:
+            None: No description was returned from AFLUX.
+        """
+        return self._lazy_load("spinD_magmom_orig")    
+        
+    def spinF(self):
+        """fermi level spin decomposition (`mandatory`). Units: `&mu;<sub>B</sub>`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: For spin polarized calculations, the magnetization of the cell at the Fermi level.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `spinF=0.410879`
+        """
+        return self._lazy_load("spinF")    
+        
+    def agl_acoustic_debye(self):
+        """AGL acoustic Debye temperature (`optional`). Units: `K`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Returns the acoustic Debye temperature as calculated with AGL.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `agl_acoustic_debye=492`
+        """
+        return self._lazy_load("agl_acoustic_debye")    
+        
+    def node_CPU_MHz(self):
+        """CPU rate (`optional`). Units: `Megahertz`.
+        
+        
+        
+
+        Returns:
+            float: Information about the CPU speed in the node/cluster where the calculation was performed.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `node_CPU_MHz=12`
+        """
+        return self._lazy_load("node_CPU_MHz")    
+        
+    def nbondxx(self):
+        """Nearest neighbors bond lengths (`optional`). Units: `&Aring;`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`forces`
+          - :meth:`kpoints`
+          - :meth:`pressure_residual`
+          - :meth:`stress_tensor`
+
+        Returns:
+            list: Nearest neighbors bond lengths of the relaxed structure per ordered set of species Ai,Aj greater than or equal to i.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `nbondxx=1.2599,1.0911,1.0911,1.7818,1.2599,1.7818`
+        """
+        return self._lazy_load("nbondxx")    
+        
+    def kpoints(self):
+        """K-point mesh (`optional`). Units: ``.
+        
+        
+        
+
+        Returns:
+            tuple: Set of k-point meshes uniquely identifying the various steps of the calculations, e.g. relaxation, static and electronic band structure (specifying the k-space symmetry points of the structure).
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `kpoints=10,10,10;16,16,16;G-X-W-K-G-L-U-W-L-K+U-X`
+        """
+        return self._lazy_load("kpoints")    
+        
+    def prototype(self):
+        """original prototype (`mandatory`). Units: ``.
+        
+        
+        
+
+        Returns:
+            str: Returns the AFLOW unrelaxed prototype which was used for the calculation.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `prototype=T0001.A2BC`
+        """
+        return self._lazy_load("prototype")    
+        
+    def corresponding(self):
+        """coresponding (`optional`). Units: ``.
+        
+        .. warning:: This keyword is still listed as development level. Use it
+          knowing that it is subject to change or removal.
+        
+
+        Returns:
+            list: Returns the name (not necessarily an individual) and affiliation associated with the data origin concerning correspondence about data.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `corresponding=M_Buongiorno_Nardelli_mbn@unt.edu`
+        """
+        return self._lazy_load("corresponding")    
+        
+    def valence_cell_iupac(self):
+        """unit cell IUPAC valence (`mandatory`). Units: ``.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Returns IUPAC valence, the maximum number of univalent atoms that may combine with the atoms.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `valence_cell_iupac=22`
+        """
+        return self._lazy_load("valence_cell_iupac")    
+        
+    def enthalpy_formation_atom(self):
+        """atomic formation enthalpy (`mandatory`). Units: `eV/atom`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Returns the formation enthalpy DeltaHFatomic per atom).
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `enthalpy_formation_atom=-33.1587`
+        """
+        return self._lazy_load("enthalpy_formation_atom")    
+        
+    def agl_heat_capacity_Cp_300K(self):
+        """AGL heat capacity Cp (`optional`). Units: `kB/cell`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Returns the heat capacity at constant pressure as calculated with AGL at 300K.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `agl_heat_capacity_Cp_300K=5.502`
+        """
+        return self._lazy_load("agl_heat_capacity_Cp_300K")    
+        
+    def positions_fractional(self):
+        """relaxed relative positions (`mandatory`). Units: ``.
+        
+        .. warning:: This keyword is still listed as development level. Use it
+          knowing that it is subject to change or removal.
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`forces`
+          - :meth:`kpoints`
+          - :meth:`pressure_residual`
+          - :meth:`stress_tensor`
+
+        Returns:
+            numpy.ndarray: Final fractional positions (xi,xj,xk) with respect to the unit cell as specified in $geometry.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `positions_fractional=0,0,0;0.25,0.25,0.25;...`
+        """
+        return self._lazy_load("positions_fractional")    
+        
+    def node_CPU_Cores(self):
+        """available CPU cores (`optional`). Units: ``.
+        
+        
+        
+
+        Returns:
+            float: Information about the number of cores in the node/cluster where the calculation was performed.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `node_CPU_Cores=12`
+        """
+        return self._lazy_load("node_CPU_Cores")    
+        
+    def lattice_variation_relax(self):
+        """relaxed lattice variation (`mandatory`). Units: ``.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`forces`
+          - :meth:`kpoints`
+          - :meth:`stress_tensor`
+
+        Returns:
+            str: Return the lattice system and lattice variation (Brillouin zone) of the relaxed structure after the calculation.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `lattice_variation_relax=rhombohedral`
+        """
+        return self._lazy_load("lattice_variation_relax")    
+        
+    def eentropy_atom(self):
+        """atomistic electronic entropy (`optional`). Units: `eV/atom`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Returns the electronic entropy of the atom used to converge the ab initio calculation (smearing).
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `eentropy_atom=0.0011`
+        """
+        return self._lazy_load("eentropy_atom")    
+        
+    def calculation_time(self):
+        """used time (`optional`). Units: `seconds`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Total time taken for the calculation.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `calculation_time=32`
+        """
+        return self._lazy_load("calculation_time")    
+        
+    def energy_cell(self):
+        """unit cell energy (`mandatory`). Units: `eV`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+          - :meth:`pressure_residual`
+          - :meth:`stress_tensor`
+
+        Returns:
+            float: Returns the total ab initio energy of the unit cell, E. At T=0K and p=0, this is the internal energy of the system (per unit cell).
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `energy_cell=-82.1656`
+        """
+        return self._lazy_load("energy_cell")    
+        
+    def aflowlib_entries_number(self):
+        """aflowlib entry count (`conditional`). Units: ``.
+        
+        
+        
+
+        Returns:
+            float: For projects and set-layer entries, aflowlib_entrieslists the available sub-entries which are associated with the $aurl of the subdirectories.  By parsing $aurl/?aflowlib_entries (containing $aurl/aflowlib_entries_number entries) the user finds further locations to interrogate.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `aflowlib_entries_number=654`
+        """
+        return self._lazy_load("aflowlib_entries_number")    
+        
+    def agl_bulk_modulus_isothermal_300K(self):
+        """AGL isothermal bulk modulus 300K (`optional`). Units: `GPa`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Returns the isothermal bulk modulus at 300K as calculated with AGL.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `agl_bulk_modulus_isothermal_300K=96.6`
+        """
+        return self._lazy_load("agl_bulk_modulus_isothermal_300K")    
+        
+    def natoms(self):
+        """unit cell atom count (`mandatory`). Units: ``.
+        
+        
+        
+
+        Returns:
+            float: Returns the number of atoms in the unit cell of the structure entry. The number can be non integer if partial occupation is considered within appropriate approximations.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `natoms=12`
+        """
+        return self._lazy_load("natoms")    
+        
+    def agl_thermal_expansion_300K(self):
+        """AGL thermal expansion (`optional`). Units: `1/K`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Returns the thermal expansion as calculated with AGL at 300K.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `agl_thermal_expansion_300K=4.997e-05`
+        """
+        return self._lazy_load("agl_thermal_expansion_300K")    
+        
+    def data_language(self):
+        """data language (`optional`). Units: ``.
+        
+        
+        
+
+        Returns:
+            list: Gives the language of the data in AFLOWLIB.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `data_language=aflowlib`
+        """
+        return self._lazy_load("data_language")    
+        
+    def Egap_type(self):
+        """band gap type (`mandatory`). Units: ``.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            str: Given a band gap, this keyword describes if the system is a metal, a semi-metal, an insulator with direct or indirect band gap.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `Egap_type=insulator_direct`
+        """
+        return self._lazy_load("Egap_type")    
+        
+    def density(self):
+        """mass density (`optional`). Units: `grams/cm<sup>3</sup>`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+          - :meth:`pressure_residual`
+          - :meth:`stress_tensor`
+
+        Returns:
+            float: Returns the mass density in grams/cm3.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `density=7.76665`
+        """
+        return self._lazy_load("density")    
+        
+    def ael_bulk_modulus_vrh(self):
+        """AEL VRH bulk modulus (`optional`). Units: `GPa`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Returns the bulk modulus as calculated using the Voigt-Reuss-Hill average with AEL.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `ael_bulk_modulus_vrh=105.315`
+        """
+        return self._lazy_load("ael_bulk_modulus_vrh")    
+        
+    def ael_poisson_ratio(self):
+        """AEL Poisson ratio (`optional`). Units: ``.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Returns the istropic Poisson ratio as calculated with AEL.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `ael_poisson_ratio=0.216`
+        """
+        return self._lazy_load("ael_poisson_ratio")    
+        
+    def compound(self):
+        """chemical formula (`mandatory`). Units: ``.
+        
+        
+        
+
+        Returns:
+            str: Returns the composition description of the compound in the calculated cell.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `compound=Co2Er6Si6`
+        """
+        return self._lazy_load("compound")    
+        
+    def author(self):
+        """author (`optional`). Units: ``.
+        
+        .. warning:: This keyword is still listed as development level. Use it
+          knowing that it is subject to change or removal.
+        
+
+        Returns:
+            list: Returns the name (not necessarily an individual) and affiliation associated with authorship of the data.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `author=Marco_Buongiorno_Nardelli,Ohad_Levy,Jesus_Carrete`
+        """
+        return self._lazy_load("author")    
+        
+    def spacegroup_relax(self):
+        """relaxed space group number (`mandatory`). Units: ``.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`forces`
+          - :meth:`kpoints`
+          - :meth:`stress_tensor`
+
+        Returns:
+            float: Returns the spacegroup number of the relaxed structure after the calculation.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `spacegroup_relax=225`
+        """
+        return self._lazy_load("spacegroup_relax")    
+        
+    def ldau_TLUJ(self):
+        """on site coulomb interaction (`mandatory`). Units: ``.
+        
+        .. warning:: This keyword is still listed as development level. Use it
+          knowing that it is subject to change or removal.
+        
+
+        Returns:
+            list: This vector of numbers contains the parameters of the DFT+U calculations, based on a corrective functional inspired by the Hubbard model.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `ldau_TLUJ=2;2,0,0;5,0,0;0,0,0`
+        """
+        return self._lazy_load("ldau_TLUJ")    
+        
+    def spin_atom(self):
+        """atomic spin polarization (`mandatory`). Units: `&mu;<sub>B</sub>/atom`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: For spin polarized calculations, the magnetization per atom.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `spin_atom=2.16419`
+        """
+        return self._lazy_load("spin_atom")    
+        
+    def lattice_system_relax(self):
+        """relaxed lattice system (`mandatory`). Units: ``.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`forces`
+          - :meth:`kpoints`
+          - :meth:`stress_tensor`
+
+        Returns:
+            str: Return the lattice system and lattice variation (Brillouin zone) of the relaxed structure after the calculation.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `lattice_system_relax=rhombohedral`
+        """
+        return self._lazy_load("lattice_system_relax")    
+        
+    def Pearson_symbol_orig(self):
+        """original pearson symbol (`mandatory`). Units: ``.
+        
+        
+        
+
+        Returns:
+            str: Returns the Pearson symbol of the original-unrelaxed structure before the calculation.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `Pearson_symbol_orig=mS32`
+        """
+        return self._lazy_load("Pearson_symbol_orig")    
+        
+    def spinD(self):
+        """atomic spin decomposition (`mandatory`). Units: `&mu;<sub>B</sub>`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            list: For spin polarized calculations, the spin decomposition over the atoms of the cell.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `spinD=0.236,0.236,-0.023,1.005`
+        """
+        return self._lazy_load("spinD")    
+        
+    def spacegroup_orig(self):
+        """original space group number (`mandatory`). Units: ``.
+        
+        
+        
+
+        Returns:
+            float: Returns the spacegroup number of the original-unrelaxed structure before the calculation.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `spacegroup_orig=225`
+        """
+        return self._lazy_load("spacegroup_orig")    
+        
+    def nspecies(self):
+        """species count (`mandatory`). Units: ``.
+        
+        
+        
+
+        Returns:
+            float: Returns the number of species in the system (e.g., binary = 2, ternary = 3, etc.).
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `nspecies=3`
+        """
+        return self._lazy_load("nspecies")    
+        
+    def aflow_version(self):
+        """aflow version (`optional`). Units: ``.
+        
+        
+        
+
+        Returns:
+            str: Returns the version number of AFLOW used to perform the calculation.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `aflow_version=aflow30641`
+        """
+        return self._lazy_load("aflow_version")    
+        
+    def Pearson_symbol_relax(self):
+        """relaxed pearson symbol (`mandatory`). Units: ``.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`stress_tensor`
+
+        Returns:
+            str: Returns the Pearson symbol of the relaxed structure after the calculation.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `Pearson_symbol_relax=mS32`
+        """
+        return self._lazy_load("Pearson_symbol_relax")    
+        
+    def auid(self):
+        """AFLOWLIB Unique Identifier (`mandatory`). Units: ``.
+        
+        
+        
+
+        Returns:
+            str: AFLOWLIB Unique Identifier for the entry, AUID, which can be used as a publishable object identifier.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `auid=aflow:e9c6d914c4b8d9ca`
+        """
+        return self._lazy_load("auid")    
+        
+    def bader_net_charges(self):
+        """partial charge per atom (`optional`). Units: `electrons`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            list: Returns a comma delimited set of partial charges per atom of the primitive cell as calculated by the Bader Atoms in Molecules Analysis.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `bader_net_charges=0.125,0.125,-0.25`
+        """
+        return self._lazy_load("bader_net_charges")    
+        
+    def code(self):
+        """ab initio code (`optional`). Units: ``.
+        
+        
+        
+
+        Returns:
+            str: Returns the software name and version used to perform the simulation.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `code=vasp.4.6.35`
+        """
+        return self._lazy_load("code")    
+        
+    def data_source(self):
+        """data source (`optional`). Units: ``.
+        
+        
+        
+
+        Returns:
+            list: Gives the source of the data in AFLOWLIB.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `data_source=aflowlib`
+        """
+        return self._lazy_load("data_source")    
+        
+    def agl_debye(self):
+        """AGL Debye temperature (`optional`). Units: `K`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Returns the Debye temperature as calculated with AGL.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `agl_debye=620`
+        """
+        return self._lazy_load("agl_debye")    
+        
+    def ael_shear_modulus_reuss(self):
+        """AEL Reuss shear modulus (`optional`). Units: `GPa`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Returns the shear modulus as calculated using the Reuss method with AEL.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `ael_shear_modulus_reuss=73.787`
+        """
+        return self._lazy_load("ael_shear_modulus_reuss")    
+        
+    def positions_cartesian(self):
+        """relaxed absolute positions (`mandatory`). Units: `&Aring;`.
+        
+        .. warning:: This keyword is still listed as development level. Use it
+          knowing that it is subject to change or removal.
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`forces`
+          - :meth:`kpoints`
+          - :meth:`pressure_residual`
+          - :meth:`stress_tensor`
+
+        Returns:
+            numpy.ndarray: Final Cartesian positions (xi,xj,xk) in the notation of the code.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `positions_cartesian=0,0,0;18.18438,0,2.85027;...`
+        """
+        return self._lazy_load("positions_cartesian")    
+        
+    def node_RAM_GB(self):
+        """available RAM (`optional`). Units: `Gigabytes`.
+        
+        
+        
+
+        Returns:
+            float: Information about the RAM in the node/cluster where the calculation was performed.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `node_RAM_GB=12`
+        """
+        return self._lazy_load("node_RAM_GB")    
+        
+    def Bravais_lattice_orig(self):
+        """original bravais lattice (`optional`). Units: ``.
+        
+        
+        
+
+        Returns:
+            str: Returns the Bravais lattice of the original unrelaxed structure before the calculation.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `Bravais_lattice_orig=MCLC`
+        """
+        return self._lazy_load("Bravais_lattice_orig")    
+        
+    def scintillation_attenuation_length(self):
+        """attenuation length (`mandatory`). Units: `cm`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Returns the scintillation attenuation length of the compound in cm.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `scintillation_attenuation_length=2.21895`
+        """
+        return self._lazy_load("scintillation_attenuation_length")    
+        
+    def agl_thermal_conductivity_300K(self):
+        """AGL thermal conductivity (`optional`). Units: `W/m*K`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Returns the thermal conductivity as calculated with AGL at 300K.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `agl_thermal_conductivity_300K=24.41`
+        """
+        return self._lazy_load("agl_thermal_conductivity_300K")    
+        
+    def dft_type(self):
+        """DFT type (`optional`). Units: ``.
+        
+        
+        
+
+        Returns:
+            list: Returns information about the pseudopotential type, the exchange correlation functional used (normal or hybrid) and use of GW.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `dft_type=PAW_PBE,HSE06`
+        """
+        return self._lazy_load("dft_type")    
+        
+    def sg(self):
+        """compound space group (`mandatory`). Units: ``.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`forces`
+          - :meth:`kpoints`
+          - :meth:`stress_tensor`
+
+        Returns:
+            list: Evolution of the space group of the compound.  The first, second and third string represent space group name/number before the first, after the first, and after the last relaxation of the calculation.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `sg=Fm-3m#225,Fm-3m#225,Fm-3m#225`
+        """
+        return self._lazy_load("sg")    
+        
+    def ael_shear_modulus_vrh(self):
+        """AEL VRH shear modulus (`optional`). Units: `GPa`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Returns the shear modulus as calculated using the Voigt-Reuss-Hill average with AEL.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `ael_shear_modulus_vrh=73.793`
+        """
+        return self._lazy_load("ael_shear_modulus_vrh")    
+        
+    def enthalpy_formation_cell(self):
+        """unit cell formation enthalpy (`mandatory`). Units: `eV`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Returns the formation enthalpy DeltaHF per unit cell.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `enthalpy_formation_cell=-33.1587`
+        """
+        return self._lazy_load("enthalpy_formation_cell")    
+        
+    def agl_gruneisen(self):
+        """AGL Gruneisen parameter (`optional`). Units: ``.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+
+        Returns:
+            float: Returns the Gruneisen parameter as calculated with AGL.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `agl_gruneisen=2.06`
+        """
+        return self._lazy_load("agl_gruneisen")    
+        
+    def enthalpy_cell(self):
+        """unit cell enthalpy (`mandatory`). Units: `eV`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`kpoints`
+          - :meth:`pressure_residual`
+          - :meth:`stress_tensor`
+
+        Returns:
+            float: Returns the enthalpy of the system of the unit cell, H = E + PV.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `enthalpy_cell=-82.1656`
+        """
+        return self._lazy_load("enthalpy_cell")    
+        
+    def volume_cell(self):
+        """unit cell volume (`mandatory`). Units: `&Aring;<sup>3</sup>`.
+        
+        
+        .. note:: The following verifications are available for this
+          keyword. They are exposed as additional methods on this object.
+          
+          - :meth:`energy_cutoff`
+          - :meth:`forces`
+          - :meth:`kpoints`
+          - :meth:`pressure_residual`
+          - :meth:`stress_tensor`
+
+        Returns:
+            float: Returns the volume of the unit cell.
+        
+        Examples:
+            You can expect the *content* of the result to be something like:
+
+            `volume_cell=100.984`
+        """
+        return self._lazy_load("volume_cell")    
+    
