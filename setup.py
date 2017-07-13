@@ -18,7 +18,7 @@ except ImportError:
 
 from os import path
 setup(name='aflow',
-      version='0.0.0',
+      version='0.0.1',
       description='Python API for searching AFLOW database.',
       long_description= "" if not path.isfile("README.md") else read_md('README.md'),
       author='Conrad W Rosenbrock',

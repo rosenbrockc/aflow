@@ -48,8 +48,10 @@ async def _get_kw_help(keyword):
         d = metadata[0]
     _set_defaults(d)
 
-    from aflow.caster import ptype
+    from aflow.caster import ptype, docstrings
     d["ptype"] = ptype(d["type"], keyword)
+    if keyword in docstrings:
+        d["customdoc"] = docstrings[keyword]
     
     return d
 
@@ -64,7 +66,7 @@ def _set_defaults(d):
     d.setdefault("inclusion", "unknown")
     d.setdefault("status", "unknown")
     d.setdefault("description", "No description was returned from AFLUX.")
-    d.setdefault("type", "None")
+    d.setdefault("type")
 
 async def keywords():
     """Generates a python module file for the :class:`~aflow.entries.Entry` that

@@ -4,6 +4,48 @@ operators to make querying with AFLUX intuitive.
 from six import string_types
 import numpy
 
+_all_keywords = []
+"""list: of `str` keyword names for which class instances exist within
+this module.
+"""
+
+def load(target):
+    """Loads all keywords into the specified target dictionary.
+    """
+    import sys
+    self = sys.modules[__name__]    
+    _find_all()
+
+    for n in _all_keywords:
+        cls = getattr(self, n)
+        target[n] = cls
+
+def _find_all():
+    """Finds the names of all keywords supported in this module.
+    """
+    #Get a reference to the module and its global keyword cache.
+    global _all_keywords    
+    if len(_all_keywords) == 0:
+        import sys
+        import inspect
+        self = sys.modules[__name__]
+        for n, o in inspect.getmembers(self):
+            if isinstance(o, Keyword):
+                _all_keywords.append(n)    
+
+def reset():
+    """Resets all the keyword instances internal states so that they
+    can be re-used for a new query.
+    """
+    import sys
+    self = sys.modules[__name__]
+    _find_all()
+    
+    for n in _all_keywords:
+        cls = getattr(self, n)
+        cls.state = []
+        cls.cache = []
+
 class Keyword(object):
     """Represents an abstract keyword that can be sub-classed for a
     specific material attribute. This class also represents logical
@@ -39,10 +81,6 @@ class Keyword(object):
         else:
             return self.name
         
-    def __getattr__(self, attr):
-        if attr in self.attributes:
-            return self.attributes[attr]
-        
     def __lt__(self, other):
         if isinstance(other, string_types):
             self.cache.append("{0}(*'{1}')".format(self.name, other))
@@ -57,9 +95,10 @@ class Keyword(object):
             self.cache.append("{0}({1}*)".format(self.name, other))
         return self
 
-    def __contains__(self, other):
+    def __mod__(self, other):
         assert isinstance(other, string_types)
         self.cache.append("{0}(*'{1}'*)".format(self.name, other))
+        return self
     
     def __eq__(self, other):
         if isinstance(other, string_types):
@@ -95,13 +134,17 @@ class Keyword(object):
                 s = self.state[0]
             elif len(self.state) == 0 and len(self.cache) == 1:
                 s = self.cache[0]
-
+            if ':' in s or ',' in s:
+                s = "({})".format(s)
+                
             o = None
             if len(other.state) == 1 and len(other.cache) == 0:
                 o = other.state[0]
             elif len(other.state) == 0 and len(other.cache) == 1:
                 o = other.cache[0]
-            
+            if ':' in o or ',' in o:
+                o = "({})".format(o)
+
             assert s is not None
             assert o is not None            
             result = Keyword(["{0}{1}{2}".format(s, token, o)])
@@ -115,13 +158,18 @@ class Keyword(object):
         return self._generic_combine(other, ':')
 
     def __invert__(self):
-        assert len(self.state) <= 1
+        assert len(self.state) == 1 or len(self.cache) == 1
         if len(self.state) == 1:
             if '!' in self.state[0]:
                 self.state[0] = self.state[0].replace('!', '')
             else:
                 self.state[0] = self.state[0].replace('(', "(!")
-        return self
+        elif len(self.cache) == 1:
+            if '!' in self.cache[0]:
+                self.cache[0] = self.cache[0].replace('!', '')
+            else:
+                self.cache[0] = self.cache[0].replace('(', "(!")
+        return self    
     
 {% for keyword, metadata in keywords.items() %}    
 class _{{keyword}}(Keyword):
@@ -134,7 +182,11 @@ class _{{keyword}}(Keyword):
     {%- endif %}
 
     Returns:
+        {%- if "customdoc" in metadata %}
+        {{metadata.customdoc|indent(12, False}}
+        {%- else %}
         {{metadata.ptype}}: {{metadata.description|indent(12, False)}}
+        {% endif %}
     """
     name = "{{keyword}}"
     ptype = {{metadata.ptype}}

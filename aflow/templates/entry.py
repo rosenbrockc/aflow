@@ -1,6 +1,21 @@
 """Provides class and methods for abstracting the data from AFLOW into
 python.
 """
+from aflow.caster import cast
+import aflow.keywords as kw
+    
+def _val_from_str(attr, value):
+    """Retrieves the specified attribute's value, cast to an
+    appropriate python type where possible.
+    """
+    clsname = "_{}".format(attr)
+    if hasattr(kw, clsname):
+        cls = getattr(kw, clsname)
+        atype = getattr(cls, "atype")
+        return cast(atype, attr, value)
+    else:
+        return value
+
 class Entry(object):
     """Encapsulates the result of a single material entry in the AFLOW
     database.
@@ -22,18 +37,7 @@ class Entry(object):
           values).
     """
     def __init__(self, **kwargs):
-        from aflow.caster import cast
-        import aflow.keywords as kw
-        self.attributes = {}
-        for attr, value in kwargs.items():
-            #Set the default raw values 
-            self.attributes[attr] = value
-            clsname = "_{}".format(attr)
-            if hasattr(kw, clsname):
-                cls = getattr(kw, clsname)
-                atype = getattr(cls, "atype")
-                self.attributes[attr] = cast(atype, attr, value)
-                    
+        self.attributes = {a: _val_from_str(a, v) for a, v in kwargs.items()}
         self.raw = kwargs
 
     def _lazy_load(self, keyword):
@@ -56,10 +60,9 @@ class Entry(object):
 
             #We need to coerce the string returned from aflow into the
             #appropriate python format.
-            from aflow.caster import cast
-            result = cast(r.text)
+            result = _val_from_str(keyword, r.text)
             self.attributes[keyword] = result
-            return result        
+            return result
     {% for keyword, metadata in keywords.items() %}
     @property
     def {{keyword}}(self):

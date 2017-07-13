@@ -2,6 +2,8 @@
 creates :class:`numpy.ndarray` for vector or tensor-valued properties.
 """
 import re
+import numpy as np
+
 _rx_int = re.compile(r"^\d+$")
 
 def _strings(value):
@@ -26,9 +28,30 @@ def _forces(value):
 
 def _kpoints(value):
     parts = value.split(';')
-    kpts = [np.array(list(map(_number, p.split(','))))
-            for p in parts[0:-1]]
-    return kpts + [parts[-1]]
+    relaxation = np.array(list(map(_number, parts[0].split(','))))
+    static = np.array(list(map(_number, parts[1].split(','))))
+    if len(parts) == 3:
+        points = parts[-1].split('-')
+        nsamples = None
+    else:
+        points = parts[-2].split('-')
+        nsamples = int(parts[-1])
+        
+    return {
+        "relaxation": relaxation,
+        "static": static,
+        "points": points,
+        "nsamples": nsamples
+        }
+
+docstrings = {
+    "kpoints": """dict: with keys ['relaxation', 'static', 'points', 'nsamples']
+describing the cells for the relaxation and static calculations, the
+k-space symmetry points of the structure and the number of samples."""
+}
+"""dict: key-value pairs for custom docstrings describing the return
+value of keywords with complex structure.
+"""
 
 exceptions = ["forces", "kpoints", "positions_cartesian",
               "positions_fractional", "spind"]
@@ -50,10 +73,11 @@ def ptype(atype, keyword):
         "number": "float",
         "numbers": "list",
         "forces": "numpy.ndarray",
-        "kpoints": "tuple",
+        "kpoints": "dict",
         "positions_cartesian": "numpy.ndarray",
         "positions_fractional": "numpy.ndarray",
         "spind": "list",
+        "None": None,
         None: None
     }
     
@@ -85,7 +109,8 @@ def cast(atype, keyword, value):
         "positions_cartesian": _forces,
         "positions_fractional": _forces,
         "spind": _numbers,
-        None: lambda v: v
+        "None": lambda v: v,
+        None: lambda v: v,
     }
 
     if keyword not in exceptions:
