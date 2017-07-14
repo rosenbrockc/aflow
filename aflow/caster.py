@@ -44,6 +44,9 @@ def _kpoints(value):
         "nsamples": nsamples
         }
 
+def _stoich(value):
+    return list(map(_number, value.strip().split()))
+
 docstrings = {
     "kpoints": """dict: with keys ['relaxation', 'static', 'points', 'nsamples']
 describing the cells for the relaxation and static calculations, the
@@ -54,7 +57,7 @@ value of keywords with complex structure.
 """
 
 exceptions = ["forces", "kpoints", "positions_cartesian",
-              "positions_fractional", "spind"]
+              "positions_fractional", "spind", "stoich"]
 """list: of AFLOW keywords for which the casting has to be handled in a special
 way.
 """
@@ -77,10 +80,11 @@ def ptype(atype, keyword):
         "positions_cartesian": "numpy.ndarray",
         "positions_fractional": "numpy.ndarray",
         "spind": "list",
+        "stoich": "list",
         "None": None,
         None: None
     }
-    
+
     if keyword not in exceptions:
         return castmap[atype]
     else:
@@ -109,6 +113,7 @@ def cast(atype, keyword, value):
         "positions_cartesian": _forces,
         "positions_fractional": _forces,
         "spind": _numbers,
+        "stoich": _stoich,
         "None": lambda v: v,
         None: lambda v: v,
     }

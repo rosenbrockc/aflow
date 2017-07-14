@@ -7,14 +7,15 @@ import pytest
 def test_reset():
     """Tests the test resetting.
     """
+    from aflow.keywords import reset
     load(globals())
+    reset()
     k = (Egap > 6) & (author == 'stefano')
 
     assert len(Egap.cache) > 0
     assert len(author.cache) > 0
     assert len(k.state) > 0
 
-    from aflow.keywords import reset
     reset()
     assert len(Egap.cache) == 0
     assert len(author.cache) == 0

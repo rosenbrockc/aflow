@@ -183,7 +183,7 @@ class _{{keyword}}(Keyword):
 
     Returns:
         {%- if "customdoc" in metadata %}
-        {{metadata.customdoc|indent(12, False}}
+        {{metadata["customdoc"]|indent(12, False)}}
         {%- else %}
         {{metadata.ptype}}: {{metadata.description|indent(12, False)}}
         {% endif %}

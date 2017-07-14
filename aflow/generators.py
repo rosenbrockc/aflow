@@ -9,51 +9,33 @@ to generate the API documentation automatically.
 def _get_keywords():
     """Returns a list of the currently valid keywords for the AFLUX API.
     """
-    from bs4 import BeautifulSoup
-    import requests
-    result = []
-    url = "http://aflowlib.duke.edu/aflowwiki/doku.php?id=documentation:all_keywords"
-    r = requests.get(url)
-    soup = BeautifulSoup(r.text, "html5lib")
-    
-    for heading in soup.find_all('h3'):
-        if heading.get('id') is not None:
-            result.append(heading.text)
+    from urllib.request import urlopen
+    import json
+    url = "http://aflowlib.duke.edu/search/API/?schema"
+    r = urlopen(url).read().decode("utf-8")
+    return json.loads(r)
 
-    return result
-
-async def _get_kw_help(keyword):
+def _get_kw_help(keyword, metadata):
     """Gets the documentation string and type information, etc. from
     the AFLUX API.
 
     Args:
         keyword (str): name of the keyword to get help for.
+        metadata (dict): key-value pairs describing the keyword's
+          metadata in the AFLOW database.
 
     Returns:
         dict: with key-value pairs returned by AFLUX (if the entry
         exists); otherwise `None`.
     """
-    import requests
-    import json
-    result = []
-    url = "http://aflowlib.duke.edu/search/API/?schema({0})".format(keyword)
-    r = requests.get(url)
-    metadata = json.loads(r.text)
-
-    #It is possible that the AFLUX schema request won't return anything for a
-    #particular keyword. In this case, we need to supply some generic default
-    #values.
-    d = {}
-    if len(metadata) > 0:
-        d = metadata[0]
-    _set_defaults(d)
+    _set_defaults(metadata)
 
     from aflow.caster import ptype, docstrings
-    d["ptype"] = ptype(d["type"], keyword)
+    metadata["ptype"] = ptype(metadata["type"], keyword)
     if keyword in docstrings:
-        d["customdoc"] = docstrings[keyword]
+        metadata["customdoc"] = docstrings[keyword]
     
-    return d
+    return metadata
 
 def _set_defaults(d):
     """Adds the default values to the specified dictionary if they don't already
@@ -68,21 +50,31 @@ def _set_defaults(d):
     d.setdefault("description", "No description was returned from AFLUX.")
     d.setdefault("type")
 
-async def keywords():
+def keywords(root=None):
     """Generates a python module file for the :class:`~aflow.entries.Entry` that
     has documented methods for lazy loading of properties from AFLOW database.
+
+    Args:
+        root (str): path in which to generate the module files.
     """
     from os import path
     from aflow.utility import reporoot
-    entries = path.join(reporoot, "aflow", "entries.py")
-    keyword = path.join(reporoot, "aflow", "keywords.py")
+    if root is None: # pragma: no cover
+        entries = path.join(reporoot, "aflow", "entries.py")
+        keyword = path.join(reporoot, "aflow", "keywords.py")
+    else:
+        entries = path.join(root, "entries.py")
+        keyword = path.join(root, "keywords.py")
 
     #Compile a dictionary of all the keywords and their corresponding
     #dictionaries.
+    from collections import OrderedDict
     kws = _get_keywords()
-    kwdata = {}
-    for kw in kws:
-        kwdata[kw] = await _get_kw_help(kw)
+    kwdata = OrderedDict()
+    for kw in sorted(kws.keys()):
+        metadata = kws[kw]
+        if kw[0:2] != "__":
+            kwdata[kw] = _get_kw_help(kw, metadata)
         
     settings = {
         "keywords": kwdata

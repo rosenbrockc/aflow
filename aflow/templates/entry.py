@@ -12,6 +12,8 @@ def _val_from_str(attr, value):
     if hasattr(kw, clsname):
         cls = getattr(kw, clsname)
         atype = getattr(cls, "atype")
+        if attr == "kpoints":
+            print(atype, attr, value)
         return cast(atype, attr, value)
     else:
         return value
@@ -47,7 +49,7 @@ class Entry(object):
         Args:
             keyword (str): name of the keyword to retrieve for this entry.
         """
-        if keyword not in self.keywords:
+        if keyword != "keywords" and keyword not in self.keywords:
             return
         
         if keyword in self.attributes:
@@ -55,7 +57,8 @@ class Entry(object):
         else:
             import requests
             import json
-            url = "http://{0}?{1}".format(self.keywords["aurl"], keyword)
+            aurl = self.attributes["aurl"].replace(".edu:", ".edu/")
+            url = "http://{0}?{1}".format(aurl, keyword)
             r = requests.get(url)
 
             #We need to coerce the string returned from aflow into the

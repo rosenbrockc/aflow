@@ -44,8 +44,9 @@ class Query(object):
         step (int): step size over entries.
     """
     def __init__(self, catalog=None, batch_size=100, step=1):
+        from aflow.keywords import keywords
         self.filters = []
-        self.selects = []
+        self.selects = []#keywords]
         self.excludes = []
         self.order = None
         self.catalog = catalog if isinstance(catalog, (list, tuple, type(None))) else [catalog]
@@ -146,13 +147,8 @@ class Query(object):
         from urllib.request import urlopen
         url = "{0}{1},{2}".format(server, self.matchbook(),
                                   self._directives(n, k))
+        print(url)
         response = json.loads(urlopen(url).read().decode("utf-8"))
-        # if n == -1:
-        #     with open("tests/data0.json") as f:
-        #         response = json.loads(f.read())
-        # if n == -2:
-        #     with open("tests/data1.json") as f:
-        #         response = json.loads(f.read())
 
         #If this is the first request, then save the number of results in the
         #query.
@@ -236,7 +232,7 @@ class Query(object):
 
         from aflow.entries import Entry
         if self._iter < self.max_N:
-            index = self.k*(n-1) + i + 1
+            index = self.k*(abs(n)-1) + i + 1
             key = "{} of {}".format(index, self.N)
             raw = self.responses[n][key]
             result = Entry(**raw)
