@@ -18,3 +18,5 @@ def list_keywords():
                 _keywords.append(name)
 
     return _keywords
+
+import aflow.keywords as K

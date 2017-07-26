@@ -5,6 +5,7 @@ server = "http://aflowlib.duke.edu/search/API/?"
 """str: API server address over HTTP.
 """
 
+from aflow import msg
 def search(catalog=None, batch_size=100):
     """Returns a :class:`aflow.control.Query` to help construct the search
     query.
@@ -136,18 +137,15 @@ class Query(object):
             n (int): page number of the results to return.
             k (int): number of datasets per page.
         """
-        if n in self.responses:
-            return self.responses[n]
-
         if len(self.responses) == 0:
             #We are making the very first request, finalize the query.
             self.finalize()
         
         import json
-        from urllib.request import urlopen
+        from six.moves import urllib
+        urlopen = urllib.request.urlopen
         url = "{0}{1},{2}".format(server, self.matchbook(),
                                   self._directives(n, k))
-        print(url)
         response = json.loads(urlopen(url).read().decode("utf-8"))
 
         #If this is the first request, then save the number of results in the
@@ -212,6 +210,11 @@ class Query(object):
 
     def __iter__(self):
         return self
+
+    def next(self):# pragma: no cover
+        """Yields a generator over AFLUX API request results.
+        """
+        return self.__next__()
     
     def __next__(self):
         """Yields a generator over AFLUX API request results.
@@ -220,15 +223,15 @@ class Query(object):
         n = (self._iter // self.k) + 1
         i = self._iter % self.k
 
-        if n > len(self.responses) and self._iter < self.max_N:
-            self._n += 1
-            self._request(self.n, self.k)
-
-        assert len(self.responses) > 0
-
         #Reverse the sign now that we have figured out the ordinal page number.
         if self.reverse:
             n *= -1
+
+        if n not in self.responses and self._iter < self.max_N:
+            self._n = abs(n)
+            self._request(self.n, self.k)
+
+        assert len(self.responses) > 0
 
         from aflow.entries import Entry
         if self._iter < self.max_N:

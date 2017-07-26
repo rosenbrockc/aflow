@@ -30,7 +30,11 @@ def _kpoints(value):
     parts = value.split(';')
     relaxation = np.array(list(map(_number, parts[0].split(','))))
     static = np.array(list(map(_number, parts[1].split(','))))
-    if len(parts) == 3:
+    if len(parts) == 3: # pragma: no cover
+        #The web page (possibly outdated) includes an example where
+        #this would be the case. We include it here for
+        #completeness. I haven't found a case yet that we could use in
+        #the unit tests to trigger this.
         points = parts[-1].split('-')
         nsamples = None
     else:

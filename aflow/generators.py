@@ -6,11 +6,13 @@ page that lists all available keywords and then querying the `help`
 feature of the AFLOW API for additional information. This is then used
 to generate the API documentation automatically.
 """
+from six.moves import urllib
 def _get_keywords():
     """Returns a list of the currently valid keywords for the AFLUX API.
     """
-    from urllib.request import urlopen
+    from six.moves import urllib
     import json
+    urlopen = urllib.request.urlopen
     url = "http://aflowlib.duke.edu/search/API/?schema"
     r = urlopen(url).read().decode("utf-8")
     return json.loads(r)

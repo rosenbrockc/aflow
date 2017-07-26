@@ -1,5 +1,10 @@
 # `aflow` Revision History
 
+## Revision 0.0.3
+
+- Full test coverage for both python 2 and python 3.
+- Partial API documentation generation.
+
 ## Revision 0.0.2
 
 - Coverage up to 95%

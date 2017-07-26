@@ -49,9 +49,6 @@ class Entry(object):
         Args:
             keyword (str): name of the keyword to retrieve for this entry.
         """
-        if keyword != "keywords" and keyword not in self.keywords:
-            return
-        
         if keyword in self.attributes:
             return self.attributes[keyword]
         else:
@@ -61,6 +58,9 @@ class Entry(object):
             url = "http://{0}?{1}".format(aurl, keyword)
             r = requests.get(url)
 
+            if len(r.text) == 0:
+                return
+            
             #We need to coerce the string returned from aflow into the
             #appropriate python format.
             result = _val_from_str(keyword, r.text)

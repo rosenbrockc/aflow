@@ -21,9 +21,10 @@ def load_module(modname, modpath, search_locs=None):
           defined.
         search_locs (str): path to search for additional submodules.
     """
-    if six.PY2:
+    if six.PY2:# pragma: no cover
         import imp
-        foo = imp.load_source(modname, modpath)
+        result = imp.load_source(modname, modpath)
+        return result
     else:
         from importlib.util import spec_from_file_location as specff
         from importlib.util import module_from_spec as modfs

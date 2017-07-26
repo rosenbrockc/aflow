@@ -18,7 +18,7 @@ except ImportError:
 
 from os import path
 setup(name='aflow',
-      version='0.0.2',
+      version='0.0.3',
       description='Python API for searching AFLOW database.',
       long_description= "" if not path.isfile("README.md") else read_md('README.md'),
       author='Conrad W Rosenbrock',
@@ -26,11 +26,14 @@ setup(name='aflow',
       url='https://github.com/rosenbrockc/aflow',
       license='MIT',
       setup_requires=['pytest-runner',],
-      tests_require=['pytest', 'python-coveralls', 'beautifulsoup4'],
+      tests_require=['pytest', 'python-coveralls'],
       install_requires=[
           "argparse",
           "termcolor",
           "numpy",
+          "six",
+          "jinja2",
+          "bs4"
       ],
       packages=['aflow'],
       scripts=[],
