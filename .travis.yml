@@ -1,3 +1,7 @@
+addons:
+    apt:
+        packages:
+            - pandoc
 language: python
 cache: pip
 python:
