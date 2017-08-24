@@ -3,6 +3,7 @@ creates :class:`numpy.ndarray` for vector or tensor-valued properties.
 """
 import re
 import numpy as np
+from aflow import msg
 
 _rx_int = re.compile(r"^\d+$")
 
@@ -107,6 +108,9 @@ def cast(atype, keyword, value):
         keyword (str): name of the keyword that the value is associated with.
         value: object (usually a string) to cast into python types.
     """
+    if value is None:
+        return
+    
     castmap = {
         "string": str,
         "strings": _strings,
@@ -122,7 +126,11 @@ def cast(atype, keyword, value):
         None: lambda v: v,
     }
 
-    if keyword not in exceptions:
-        return castmap[atype](value)
-    else:
-        return castmap[keyword](value)
+    try:
+        if keyword not in exceptions:
+            return castmap[atype](value)
+        else:
+            return castmap[keyword](value)
+    except:
+        msg.err("Cannot cast {}; unknown format.".format(value))
+    
