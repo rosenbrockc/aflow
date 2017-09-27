@@ -41,7 +41,7 @@ setup(name='aflow',
       package_data={'aflow': ['templates/*']},
       include_package_data=True,
       classifiers=[
-          'Development Status :: 2 - Pre-Alpha',
+          'Development Status :: 4 - Beta',
           'Intended Audience :: Science/Research',
           'Natural Language :: English',
           'Operating System :: MacOS',
