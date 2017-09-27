@@ -7,10 +7,16 @@
 ==================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents:
 
+   examples.rst
+   control.rst
+   keywords.rst
    entries.rst
+   caster.rst
+   generators.rst
+   utility.rst
 
 Indices and tables
 ==================

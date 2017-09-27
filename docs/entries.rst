@@ -1,5 +1,5 @@
-`AFLOW` Database Entry
-======================
+`AFLOW` Database Entries
+========================
 
 Once an initial search has been performed using `aflow`, the results
 are setup as a python generator that returns
