@@ -1,6 +1,38 @@
 """Tests that :class:`aflow.entries.Entry` objects have the correct
 attributes and that lazy fetching works correctly.
 """
+def test_eq_hash(paper):
+    """Tests equality and hashing of database entries.
+    """
+    paper.reset_iter()
+    a = paper[0]
+    assert a == a
+    assert hash(a) == hash(a.auid)
+    assert "http://aflowlib.duke.edu/AFLOWDATA" in str(a)
+    
+def test_atoms(paper):
+    from aflow import K
+    paper.reset_iter()
+
+    from ase.calculators.lj import LennardJones
+    from ase.atoms import Atoms
+    LJ = LennardJones()
+    kw = {}
+    kw[K.energy_cell] = "dft_energy"
+    rawentry = paper[0]
+    at = rawentry.atoms(keywords=kw, calculator=LJ)
+
+    assert isinstance(at, Atoms)
+    assert isinstance(at.get_total_energy(), float)
+    assert "dft_energy" in at.results
+    assert at.results["dft_energy"] == rawentry.energy_cell
+
+    at0 = rawentry.atoms(keywords=kw, calculator=LJ)
+    assert at0 == at
+
+    at2 = paper[1].atoms(calculator=LJ)
+    assert not hasattr(at2, "results")
+    
 def test_corner():
     """Tests corner cases in the module that aren't raised during
     normal use.
