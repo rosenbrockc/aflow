@@ -18,7 +18,7 @@ except ImportError:
 
 from os import path
 setup(name='aflow',
-      version='0.0.3',
+      version='0.0.5',
       description='Python API for searching AFLOW database.',
       long_description= "" if not path.isfile("README.md") else read_md('README.md'),
       author='Conrad W Rosenbrock',
@@ -33,7 +33,8 @@ setup(name='aflow',
           "numpy",
           "six",
           "jinja2",
-          "bs4"
+          "bs4",
+          "ase"
       ],
       packages=['aflow'],
       scripts=[],
