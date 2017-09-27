@@ -3,7 +3,7 @@ python.
 """
 from aflow.caster import cast
 import aflow.keywords as kw
-    
+
 def _val_from_str(attr, value):
     """Retrieves the specified attribute's value, cast to an
     appropriate python type where possible.
@@ -125,10 +125,10 @@ class Entry(object):
             import quippy
             reader = quippy.io.read
         else:
-            import ase
-            reader = ase.io.read
+            from ase.io import read
+            reader = read
 
-        from StringIO import StringIO
+        from six import StringIO
         cfile = StringIO(contcar)
         try:
             self._atoms = reader(cfile, format="vasp")
