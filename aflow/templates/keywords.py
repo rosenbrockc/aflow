@@ -73,6 +73,9 @@ class Keyword(object):
         self.cache = []
         self.classes = set([self.name])
 
+    def __hash__(self):
+        return hash(self.name)
+        
     def __str__(self):
         if len(self.state) == 1:
             return self.state[0]

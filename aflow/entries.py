@@ -41,6 +41,18 @@ class Entry(object):
     def __init__(self, **kwargs):
         self.attributes = {a: _val_from_str(a, v) for a, v in kwargs.items()}
         self.raw = kwargs
+        self._atoms = None
+        """ase.atoms.Atoms: atoms object for the configuration in the
+        database.
+        """
+
+    def __str__(self):
+        aurl = self.attributes["aurl"].replace(".edu:", ".edu/")
+        return "http://" + aurl
+    def __eq__(self, other):
+        return self.auid == other.auid
+    def __hash__(self):
+        return hash(self.auid)
 
     def _lazy_load(self, keyword):
         """Loads the value of the specified keyword via HTTP request against the
@@ -60,12 +72,86 @@ class Entry(object):
 
             if len(r.text) == 0:
                 return
-            
+
             #We need to coerce the string returned from aflow into the
             #appropriate python format.
             result = _val_from_str(keyword, r.text)
             self.attributes[keyword] = result
             return result
+
+    def atoms(self, pattern="CONTCAR.relax*", quippy=False, keywords=None,
+              calculator=None):
+        """Creates a :class:`ase.atoms.Atoms` or a :class:`quippy.atoms.Atoms`
+        object for this database entry.
+
+        Args:
+            pattern (str): pattern for choosing the file to generate the atomic
+              lattice and positions from. The pattern is passed to
+              :func:`~fnmatch.fnmatch` and the *last* entry in the list is
+              returned (so that `CONTCAR.relax2` would be returned
+              preferentially over `CONTCAR.relax1` or `CONTCAR.relax`).
+            quippy (bool): when True, return a :class:`quippy.atoms.Atoms`
+              object.
+            keywords (dict): keys are keyword obects accessible from `aflow.K`;
+              values are desired `str` names in the parameters dictionary of the
+              atoms object.
+            calculator (ase.calculators.Calculator): calculator to set for the
+              newly created atoms object.
+
+        Examples:
+            Generate a :class:`quippy.atoms.Atoms` object and include the total
+            energy and forces. Assume that `result` is a valid
+            :func:`aflow.search` object.
+
+            >>> entry = result[0] #Get the first result in the set.
+            >>> keywords = {K.energy_cell: "dft_energy", K.forces: "dft_force"}
+            >>> entry.atoms(quippy=True, keywords=keywords)
+        """
+        if self._atoms is not None:
+            return self._atoms
+        
+        from fnmatch import fnmatch
+        target = [f for f in self.files if fnmatch(f, pattern)][-1]
+        aurl = self.attributes["aurl"].replace(".edu:", ".edu/")
+        url = "http://{0}/{1}".format(aurl, target)
+
+        import requests
+        lines = requests.get(url).text.split('\n')
+        preline = ' '.join(self.species).strip() + ' !'
+        lines[0] = preline + lines[0]
+        contcar = '\n'.join(lines)
+
+        if quippy:# pragma: no cover
+            import quippy
+            reader = quippy.io.read
+        else:
+            import ase
+            reader = ase.io.read
+
+        from StringIO import StringIO
+        cfile = StringIO(contcar)
+        try:
+            self._atoms = reader(cfile, format="vasp")
+        finally:
+            cfile.close()
+
+        if calculator is not None:
+            self._atoms.set_calculator(calculator)
+        if keywords is None:
+            return self._atoms
+
+        self._atoms.results = {}
+        for kw, pname in keywords.items():
+            value = getattr(self, kw.name)
+            if quippy: # pragma: no cover
+                self._atoms.params.set_value(pname, value)
+            else:
+                #ASE only cares about certain values, but we'll save
+                #them all anyway.
+                self._atoms.results[pname] = value
+
+        return self._atoms
+        
     
     @property
     def Bravais_lattice_orig(self):
@@ -109,7 +195,7 @@ class Entry(object):
     
     @property
     def Egap(self):
-        """energy gap (`mandatory`). Units: `eV`.
+        """electronic energy band gap (`mandatory`). Units: `eV`.
         
         
         .. note:: The following verifications are available for this
@@ -214,7 +300,7 @@ class Entry(object):
     
     @property
     def Pearson_symbol_orig(self):
-        """original pearson symbol (`mandatory`). Units: ``.
+        """original Pearson symbol (`mandatory`). Units: ``.
         
         
         
@@ -231,7 +317,7 @@ class Entry(object):
     
     @property
     def Pearson_symbol_relax(self):
-        """relaxed pearson symbol (`mandatory`). Units: ``.
+        """relaxed Pearson symbol (`mandatory`). Units: ``.
         
         
         .. note:: The following verifications are available for this
@@ -1377,7 +1463,8 @@ class Entry(object):
     def keywords(self):
         """Title (`mandatory`). Units: ``.
         
-        
+        .. warning:: This keyword is still listed as development level. Use it
+          knowing that it is subject to change or removal.
         
 
         Returns:
@@ -1524,7 +1611,7 @@ class Entry(object):
     
     @property
     def natoms(self):
-        """unit cell atom count (`mandatory`). Units: ``.
+        """number of atoms in unit cell (`mandatory`). Units: ``.
         
         
         
@@ -1541,7 +1628,7 @@ class Entry(object):
     
     @property
     def nbondxx(self):
-        """Nearest neighbors bond lengths (`optional`). Units: `&Aring;`.
+        """nearest neighbor bond lengths (`optional`). Units: `&Aring;`.
         
         
         .. note:: The following verifications are available for this
@@ -1791,7 +1878,7 @@ class Entry(object):
     
     @property
     def sg(self):
-        """compound space group (`mandatory`). Units: ``.
+        """space group of compound (`mandatory`). Units: ``.
         
         
         .. note:: The following verifications are available for this
@@ -1814,7 +1901,7 @@ class Entry(object):
     
     @property
     def sg2(self):
-        """refined compound space group (`mandatory`). Units: ``.
+        """refined space group of compound  (`mandatory`). Units: ``.
         
         
         .. note:: The following verifications are available for this
@@ -1894,7 +1981,7 @@ class Entry(object):
     
     @property
     def species_pp(self):
-        """species pseudopotential(s) (`mandatory`). Units: ``.
+        """pseudopotential of chemical speciess (`mandatory`). Units: ``.
         
         
         
@@ -1928,7 +2015,7 @@ class Entry(object):
     
     @property
     def species_pp_version(self):
-        """pseudopotential species/version (`mandatory`). Units: ``.
+        """pseudopotential version and species (`mandatory`). Units: ``.
         
         
         
@@ -1945,7 +2032,7 @@ class Entry(object):
     
     @property
     def spinD(self):
-        """atomic spin decomposition (`mandatory`). Units: `&mu;<sub>B</sub>`.
+        """spin decomposition over unit cell (`mandatory`). Units: `&mu;<sub>B</sub>`.
         
         
         .. note:: The following verifications are available for this
@@ -1966,7 +2053,7 @@ class Entry(object):
     
     @property
     def spinF(self):
-        """fermi level spin decomposition (`mandatory`). Units: `&mu;<sub>B</sub>`.
+        """magnetization of unit cell at Fermi level (`mandatory`). Units: `&mu;<sub>B</sub>`.
         
         
         .. note:: The following verifications are available for this

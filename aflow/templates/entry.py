@@ -41,6 +41,18 @@ class Entry(object):
     def __init__(self, **kwargs):
         self.attributes = {a: _val_from_str(a, v) for a, v in kwargs.items()}
         self.raw = kwargs
+        self._atoms = None
+        """ase.atoms.Atoms: atoms object for the configuration in the
+        database.
+        """
+
+    def __str__(self):
+        aurl = self.attributes["aurl"].replace(".edu:", ".edu/")
+        return "http://" + aurl
+    def __eq__(self, other):
+        return self.auid == other.auid
+    def __hash__(self):
+        return hash(self.auid)
 
     def _lazy_load(self, keyword):
         """Loads the value of the specified keyword via HTTP request against the
@@ -66,6 +78,80 @@ class Entry(object):
             result = _val_from_str(keyword, r.text)
             self.attributes[keyword] = result
             return result
+
+    def atoms(self, pattern="CONTCAR.relax*", quippy=False, keywords=None,
+              calculator=None):
+        """Creates a :class:`ase.atoms.Atoms` or a :class:`quippy.atoms.Atoms`
+        object for this database entry.
+
+        Args:
+            pattern (str): pattern for choosing the file to generate the atomic
+              lattice and positions from. The pattern is passed to
+              :func:`~fnmatch.fnmatch` and the *last* entry in the list is
+              returned (so that `CONTCAR.relax2` would be returned
+              preferentially over `CONTCAR.relax1` or `CONTCAR.relax`).
+            quippy (bool): when True, return a :class:`quippy.atoms.Atoms`
+              object.
+            keywords (dict): keys are keyword obects accessible from `aflow.K`;
+              values are desired `str` names in the parameters dictionary of the
+              atoms object.
+            calculator (ase.calculators.Calculator): calculator to set for the
+              newly created atoms object.
+
+        Examples:
+            Generate a :class:`quippy.atoms.Atoms` object and include the total
+            energy and forces. Assume that `result` is a valid
+            :func:`aflow.search` object.
+
+            >>> entry = result[0] #Get the first result in the set.
+            >>> keywords = {K.energy_cell: "dft_energy", K.forces: "dft_force"}
+            >>> entry.atoms(quippy=True, keywords=keywords)
+        """
+        if self._atoms is not None:
+            return self._atoms
+        
+        from fnmatch import fnmatch
+        target = [f for f in self.files if fnmatch(f, pattern)][-1]
+        aurl = self.attributes["aurl"].replace(".edu:", ".edu/")
+        url = "http://{0}/{1}".format(aurl, target)
+
+        import requests
+        lines = requests.get(url).text.split('\n')
+        preline = ' '.join(self.species).strip() + ' !'
+        lines[0] = preline + lines[0]
+        contcar = '\n'.join(lines)
+
+        if quippy:# pragma: no cover
+            import quippy
+            reader = quippy.io.read
+        else:
+            import ase
+            reader = ase.io.read
+
+        from StringIO import StringIO
+        cfile = StringIO(contcar)
+        try:
+            self._atoms = reader(cfile, format="vasp")
+        finally:
+            cfile.close()
+
+        if calculator is not None:
+            self._atoms.set_calculator(calculator)
+        if keywords is None:
+            return self._atoms
+
+        self._atoms.results = {}
+        for kw, pname in keywords.items():
+            value = getattr(self, kw.name)
+            if quippy: # pragma: no cover
+                self._atoms.params.set_value(pname, value)
+            else:
+                #ASE only cares about certain values, but we'll save
+                #them all anyway.
+                self._atoms.results[pname] = value
+
+        return self._atoms
+        
     {% for keyword, metadata in keywords.items() %}
     @property
     def {{keyword}}(self):

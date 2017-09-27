@@ -73,6 +73,9 @@ class Keyword(object):
         self.cache = []
         self.classes = set([self.name])
 
+    def __hash__(self):
+        return hash(self.name)
+        
     def __str__(self):
         if len(self.state) == 1:
             return self.state[0]
@@ -203,7 +206,7 @@ class _Bravais_lattice_relax(Keyword):
 Bravais_lattice_relax = _Bravais_lattice_relax()
     
 class _Egap(Keyword):
-    """energy gap (`mandatory`). Units: `eV`.
+    """electronic energy band gap (`mandatory`). Units: `eV`.
     
     
 
@@ -278,7 +281,7 @@ class _PV_cell(Keyword):
 PV_cell = _PV_cell()
     
 class _Pearson_symbol_orig(Keyword):
-    """original pearson symbol (`mandatory`). Units: ``.
+    """original Pearson symbol (`mandatory`). Units: ``.
     
     
 
@@ -293,7 +296,7 @@ class _Pearson_symbol_orig(Keyword):
 Pearson_symbol_orig = _Pearson_symbol_orig()
     
 class _Pearson_symbol_relax(Keyword):
-    """relaxed pearson symbol (`mandatory`). Units: ``.
+    """relaxed Pearson symbol (`mandatory`). Units: ``.
     
     
 
@@ -1172,7 +1175,8 @@ geometry = _geometry()
 class _keywords(Keyword):
     """Title (`mandatory`). Units: ``.
     
-    
+    .. warning:: This keyword is still listed as development level. Use it
+      knowing that it is subject to change or removal.
 
     Returns:
         list: This includes the list of keywords available in the entry, separated by commas.
@@ -1292,7 +1296,7 @@ class _loop(Keyword):
 loop = _loop()
     
 class _natoms(Keyword):
-    """unit cell atom count (`mandatory`). Units: ``.
+    """number of atoms in unit cell (`mandatory`). Units: ``.
     
     
 
@@ -1307,7 +1311,7 @@ class _natoms(Keyword):
 natoms = _natoms()
     
 class _nbondxx(Keyword):
-    """Nearest neighbors bond lengths (`optional`). Units: `&Aring;`.
+    """nearest neighbor bond lengths (`optional`). Units: `&Aring;`.
     
     
 
@@ -1506,7 +1510,7 @@ class _scintillation_attenuation_length(Keyword):
 scintillation_attenuation_length = _scintillation_attenuation_length()
     
 class _sg(Keyword):
-    """compound space group (`mandatory`). Units: ``.
+    """space group of compound (`mandatory`). Units: ``.
     
     
 
@@ -1521,7 +1525,7 @@ class _sg(Keyword):
 sg = _sg()
     
 class _sg2(Keyword):
-    """refined compound space group (`mandatory`). Units: ``.
+    """refined space group of compound  (`mandatory`). Units: ``.
     
     
 
@@ -1581,7 +1585,7 @@ class _species(Keyword):
 species = _species()
     
 class _species_pp(Keyword):
-    """species pseudopotential(s) (`mandatory`). Units: ``.
+    """pseudopotential of chemical speciess (`mandatory`). Units: ``.
     
     
 
@@ -1611,7 +1615,7 @@ class _species_pp_ZVAL(Keyword):
 species_pp_ZVAL = _species_pp_ZVAL()
     
 class _species_pp_version(Keyword):
-    """pseudopotential species/version (`mandatory`). Units: ``.
+    """pseudopotential version and species (`mandatory`). Units: ``.
     
     
 
@@ -1626,7 +1630,7 @@ class _species_pp_version(Keyword):
 species_pp_version = _species_pp_version()
     
 class _spinD(Keyword):
-    """atomic spin decomposition (`mandatory`). Units: `&mu;<sub>B</sub>`.
+    """spin decomposition over unit cell (`mandatory`). Units: `&mu;<sub>B</sub>`.
     
     
 
@@ -1641,7 +1645,7 @@ class _spinD(Keyword):
 spinD = _spinD()
     
 class _spinF(Keyword):
-    """fermi level spin decomposition (`mandatory`). Units: `&mu;<sub>B</sub>`.
+    """magnetization of unit cell at Fermi level (`mandatory`). Units: `&mu;<sub>B</sub>`.
     
     
 
