@@ -146,7 +146,12 @@ class Query(object):
         urlopen = urllib.request.urlopen
         url = "{0}{1},{2}".format(server, self.matchbook(),
                                   self._directives(n, k))
-        response = json.loads(urlopen(url).read().decode("utf-8"))
+        rawresp = urlopen(url).read().decode("utf-8")
+        try:
+            response = json.loads(rawresp)
+        except:
+            msg.err("{}\n\n{}".format(url, rawresp))
+            return
 
         #If this is the first request, then save the number of results in the
         #query.
