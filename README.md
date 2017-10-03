@@ -2,7 +2,25 @@
 
 # `AFLOW` Python API
 
-Python API wrapping the AFLUX API language for AFLOW library. _Note:_ This is not an official repo of the AFLOW consortium and is not maintained by them. [API Documentation](https://rosenbrockc.github.io/aflow/)
+Python API wrapping the AFLUX API language for AFLOW library. _Note:_ This is not an official repo of the AFLOW consortium and is not maintained by them. [API Documentation](https://rosenbrockc.github.io/aflow/).
+
+If you use this package, please cite it:
+
+```
+@ARTICLE{2017arXiv171000813R,
+   author = {{Rosenbrock}, C.~W.},
+    title = "{A Practical Python API for Querying AFLOWLIB}",
+  journal = {ArXiv e-prints},
+archivePrefix = "arXiv",
+   eprint = {1710.00813},
+ primaryClass = "cs.DB",
+ keywords = {Computer Science - Databases},
+     year = 2017,
+    month = sep,
+   adsurl = {http://adsabs.harvard.edu/abs/2017arXiv171000813R},
+  adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+}
+```
 
 ## Quickstart
 
