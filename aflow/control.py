@@ -149,7 +149,8 @@ class Query(object):
         rawresp = urlopen(url).read().decode("utf-8")
         try:
             response = json.loads(rawresp)
-        except:
+        except:# pragma: no cover
+            #We can't easily simulate network failure...
             msg.err("{}\n\n{}".format(url, rawresp))
             return
 
@@ -273,18 +274,19 @@ class Query(object):
             self.filters.append(keyword)
         return self
 
-    def select(self, keyword):
+    def select(self, *keywords):
         """Adds a keyword to the list of properties to return for each material
         in the request.
 
         Args:
-            keyword (aflow.keywords.Keyword): that encapsulates the AFLUX
-              request language logic.
+            keywords (list): of :class:`aflow.keywords.Keyword` that
+              encapsulates the AFLUX request language logic.
         """
         if self._final_check():
             self._N = None
-            if keyword is not self.order:
-                self.selects.append(keyword)
+            for keyword in keywords:
+                if keyword is not self.order:
+                    self.selects.append(keyword)
         return self
 
     def orderby(self, keyword, reverse=False):
@@ -303,14 +305,15 @@ class Query(object):
                 self.selects.remove(keyword)
         return self
     
-    def exclude(self, keyword):
+    def exclude(self, *keywords):
         """Sets a keyword to be *excluded* from the response.
 
         Args:
-            keyword (aflow.keywords.Keyword): that encapsulates the AFLUX
-              request language logic.
+            keywords (list): of :class:`aflow.keywords.Keyword` that
+              encapsulates the AFLUX request language logic.
         """
         if self._final_check():
             self._N = None
-            self.excludes.append(keyword)
+            for keyword in keywords:
+                self.excludes.append(keyword)
         return self
