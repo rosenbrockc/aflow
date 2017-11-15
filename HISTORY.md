@@ -1,5 +1,10 @@
 # `aflow` Revision History
 
+## Revision 0.0.6
+
+- Fixed a bug in AFLUX handling of multiple instances of same keyword with complex logical conditions.
+- Added support for multiple keywords on select and except.
+
 ## Revision 0.0.5
 
 - Added `atoms` method to entry object to create `quippy` or `ase` atoms objects.
