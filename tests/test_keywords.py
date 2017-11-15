@@ -63,23 +63,23 @@ def test_self():
     from aflow.keywords import reset
     reset()
     k0 = ((Egap > 6) | (Egap < 21)) & (PV_cell < 13)
-    assert str(k0) == '(Egap(6*):Egap(*21)),PV_cell(*13)'
+    assert str(k0) == 'Egap(6*:*21),PV_cell(*13)'
 
     reset()
     k1 = ((Egap > 6) | (Egap < 21)) & ((PV_cell < 13) | (PV_cell > 2))
-    assert str(k1) == '(Egap(6*):Egap(*21)),(PV_cell(*13):PV_cell(2*))'
-    assert str(Egap) == 'Egap(6*):Egap(*21)'
-    assert str(PV_cell) == 'PV_cell(*13):PV_cell(2*)'
+    assert str(k1) == 'Egap(6*:*21),PV_cell(*13:2*)'
+    assert str(Egap) == 'Egap(6*:*21)'
+    assert str(PV_cell) == 'PV_cell(*13:2*)'
 
     reset()
     k2 = ((Egap > 0) & (Egap < 2)) | ((Egap > 5) | (Egap < 7))
-    assert str(k2) == '(Egap(0*),Egap(*2)):(Egap(5*):Egap(*7))'
+    assert str(k2) == 'Egap((0*,*2):(5*:*7))'
     assert len(Egap.cache) == 0
     assert len(Egap.state) == 1
 
     reset()
     k3 = ((Egap > 0) & (Egap < 2)) | (Egap == 5)
-    assert str(k2) == 'Egap(5):(Egap(0*),Egap(*2))'
+    assert str(k2) == 'Egap(5:(0*,*2))'
     
 def test_corner():
     """Tests corner cases that aren't part of the previous tests.

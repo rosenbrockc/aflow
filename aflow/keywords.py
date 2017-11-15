@@ -78,42 +78,47 @@ class Keyword(object):
         
     def __str__(self):
         if len(self.state) == 1:
-            return self.state[0]
+            s = self.state[0]
         elif len(self.cache) == 1:
-            return self.cache[0]
+            s = self.cache[0]
         else:
             return self.name
+
+        if len(self.classes) == 1:
+            return "{0}({1})".format(self.name, s)
+        else:
+            return s
         
     def __lt__(self, other):
         if isinstance(other, string_types):
-            self.cache.append("{0}(*'{1}')".format(self.name, other))
+            self.cache.append("*'{0}'".format(other))
         else:
-            self.cache.append("{0}(*{1})".format(self.name, other))
+            self.cache.append("*{0}".format(other))
         return self
             
     def __gt__(self, other):
         if isinstance(other, string_types):
-            self.cache.append("{0}('{1}'*)".format(self.name, other))
+            self.cache.append("'{0}'*".format(other))
         else:
-            self.cache.append("{0}({1}*)".format(self.name, other))
+            self.cache.append("{0}*".format(other))
         return self
 
     def __mod__(self, other):
         assert isinstance(other, string_types)
-        self.cache.append("{0}(*'{1}'*)".format(self.name, other))
+        self.cache.append("*'{0}'*".format(other))
         return self
     
     def __eq__(self, other):
         if isinstance(other, string_types):
-            self.cache.append("{0}('{1}')".format(self.name, other))
+            self.cache.append("'{0}'".format(other))
         else:
-            self.cache.append("{0}({1})".format(self.name, other))
+            self.cache.append("{0}".format(other))
         return self
 
     def _generic_combine(self, other, token):
         if other is self:
             #We need to do some special handling. We shouldn't have
-            #more than two entries in state; otherwise something went
+            #more than two entries in cache; otherwise something went
             #wrong.
             if len(self.cache) == 2:
                 args = self.cache[0], token, self.cache[1]
@@ -137,16 +142,16 @@ class Keyword(object):
                 s = self.state[0]
             elif len(self.state) == 0 and len(self.cache) == 1:
                 s = self.cache[0]
-            if ':' in s or ',' in s:
-                s = "({})".format(s)
+            #if ':' in s or ',' in s:
+            s = "{0}({1})".format(self.name, s)
                 
             o = None
             if len(other.state) == 1 and len(other.cache) == 0:
                 o = other.state[0]
             elif len(other.state) == 0 and len(other.cache) == 1:
                 o = other.cache[0]
-            if ':' in o or ',' in o:
-                o = "({})".format(o)
+            #if ':' in o or ',' in o:
+            o = "{0}({1})".format(other.name, o)
 
             assert s is not None
             assert o is not None            
@@ -162,16 +167,23 @@ class Keyword(object):
 
     def __invert__(self):
         assert len(self.state) == 1 or len(self.cache) == 1
+        #The two uncovered cases below are coded for completeness, but we don't
+        #have any tests to trigger them; i.e., they don't come up in normal
+        #operations.
         if len(self.state) == 1:
             if '!' in self.state[0]:
                 self.state[0] = self.state[0].replace('!', '')
-            else:
+            elif '(' in self.state[0]:
                 self.state[0] = self.state[0].replace('(', "(!")
+            else:# pragma: no cover
+                self.state[0] = '!' + self.state[0]
         elif len(self.cache) == 1:
             if '!' in self.cache[0]:
                 self.cache[0] = self.cache[0].replace('!', '')
-            else:
+            elif '(' in self.cache[0]:# pragma: no cover
                 self.cache[0] = self.cache[0].replace('(', "(!")
+            else:
+                self.cache[0] = '!' + self.cache[0]
         return self    
     
     
