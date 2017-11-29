@@ -18,6 +18,68 @@ def _val_from_str(attr, value):
     else:
         return value
 
+class AflowFile(object):
+    """Represents a single file for an entry in AFLOW and allows easy
+    access to download it.
+
+    Args:
+        aurl (str): URL for the entry in AFLOW.
+        filename (str): name of the file.
+    """
+    def __init__(self, aurl, filename):
+        self.aurl = aurl
+        self.filename = filename
+
+    def __repr__(self):
+        return "AflowFile({0}/{1})".format(self.aurl, self.filename)
+
+    def __call__(self, target=None):
+        """Download the file.
+
+        Args:
+            target (str): path to the location to save the file. If None, the
+              contents of the file are returned as a string.
+        """       
+        from six.moves import urllib
+        urlopen = urllib.request.urlopen
+        url = "http://{}/{}".format(self.aurl.replace(':', '/'), self.filename)
+        rawresp = urlopen(url).read().decode("utf-8")
+
+        if target is not None:
+            from os import path
+            tpath = path.abspath(path.expanduser(target))
+            with open(tpath, 'w') as f:
+                f.write(rawresp)
+            return tpath
+        else:
+            return rawresp
+    
+class AflowFiles(list):
+    """Represents a collection of files for an entry in AFLOW and allows easy
+    access to download them.
+
+    Args:
+        entry (Entry): database entry object that has a list of the files and
+          remote URL for accessing them.
+    """
+    def __init__(self, entry):
+        files = entry._lazy_load("files")
+        if files is not None:
+            super(AflowFiles, self).extend(files)
+        self.aurl = entry._lazy_load("aurl")
+
+    def __getitem__(self, key):
+        from six import string_types
+        from fnmatch import fnmatch
+        if isinstance(key, string_types):
+            matches = [f for f in self if fnmatch(f, key)]
+            if len(matches) == 1:
+                return AflowFile(self.aurl, matches[0])
+            else:
+                raise KeyError("Pattern matches more than one file.")
+        else:
+            super(AflowFiles, self).__getitem__(key)    
+    
 class Entry(object):
     """Encapsulates the result of a single material entry in the AFLOW
     database.
@@ -45,6 +107,8 @@ class Entry(object):
         """ase.atoms.Atoms: atoms object for the configuration in the
         database.
         """
+        self._files = None
+        
 
     def __str__(self):
         aurl = self.attributes["aurl"].replace(".edu:", ".edu/")
@@ -151,8 +215,15 @@ class Entry(object):
                 self._atoms.results[pname] = value
 
         return self._atoms
-        
+
+    @property
+    def files(self):
+        if self._files is None:
+            self._files = AflowFiles(self)
+        return self._files
+    
     {% for keyword, metadata in keywords.items() %}
+    {%- if keyword != "files" %}
     @property
     def {{keyword}}(self):
         """{{metadata.title}} (`{{metadata.inclusion}}`). Units: `{{metadata.units}}`.
@@ -180,5 +251,6 @@ class Entry(object):
             `{{metadata.example}}`
         {% endif -%}
         """
-        return self._lazy_load("{{keyword}}")    
+        return self._lazy_load("{{keyword}}")
+    {%- endif %}
     {% endfor %}

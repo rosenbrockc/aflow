@@ -18,6 +18,68 @@ def _val_from_str(attr, value):
     else:
         return value
 
+class AflowFile(object):
+    """Represents a single file for an entry in AFLOW and allows easy
+    access to download it.
+
+    Args:
+        aurl (str): URL for the entry in AFLOW.
+        filename (str): name of the file.
+    """
+    def __init__(self, aurl, filename):
+        self.aurl = aurl
+        self.filename = filename
+
+    def __repr__(self):
+        return "AflowFile({0}/{1})".format(self.aurl, self.filename)
+
+    def __call__(self, target=None):
+        """Download the file.
+
+        Args:
+            target (str): path to the location to save the file. If None, the
+              contents of the file are returned as a string.
+        """       
+        from six.moves import urllib
+        urlopen = urllib.request.urlopen
+        url = "http://{}/{}".format(self.aurl.replace(':', '/'), self.filename)
+        rawresp = urlopen(url).read().decode("utf-8")
+
+        if target is not None:
+            from os import path
+            tpath = path.abspath(path.expanduser(target))
+            with open(tpath, 'w') as f:
+                f.write(rawresp)
+            return tpath
+        else:
+            return rawresp
+    
+class AflowFiles(list):
+    """Represents a collection of files for an entry in AFLOW and allows easy
+    access to download them.
+
+    Args:
+        entry (Entry): database entry object that has a list of the files and
+          remote URL for accessing them.
+    """
+    def __init__(self, entry):
+        files = entry._lazy_load("files")
+        if files is not None:
+            super(AflowFiles, self).extend(files)
+        self.aurl = entry._lazy_load("aurl")
+
+    def __getitem__(self, key):
+        from six import string_types
+        from fnmatch import fnmatch
+        if isinstance(key, string_types):
+            matches = [f for f in self if fnmatch(f, key)]
+            if len(matches) == 1:
+                return AflowFile(self.aurl, matches[0])
+            else:
+                raise KeyError("Pattern matches more than one file.")
+        else:
+            super(AflowFiles, self).__getitem__(key)    
+    
 class Entry(object):
     """Encapsulates the result of a single material entry in the AFLOW
     database.
@@ -45,6 +107,8 @@ class Entry(object):
         """ase.atoms.Atoms: atoms object for the configuration in the
         database.
         """
+        self._files = None
+        
 
     def __str__(self):
         aurl = self.attributes["aurl"].replace(".edu:", ".edu/")
@@ -151,7 +215,12 @@ class Entry(object):
                 self._atoms.results[pname] = value
 
         return self._atoms
-        
+
+    @property
+    def files(self):
+        if self._files is None:
+            self._files = AflowFiles(self)
+        return self._files
     
     @property
     def Bravais_lattice_orig(self):
@@ -168,7 +237,7 @@ class Entry(object):
 
             `Bravais_lattice_orig=MCLC`
         """
-        return self._lazy_load("Bravais_lattice_orig")    
+        return self._lazy_load("Bravais_lattice_orig")
     
     @property
     def Bravais_lattice_relax(self):
@@ -191,7 +260,7 @@ class Entry(object):
 
             `Bravais_lattice_relax=MCLC`
         """
-        return self._lazy_load("Bravais_lattice_relax")    
+        return self._lazy_load("Bravais_lattice_relax")
     
     @property
     def Egap(self):
@@ -212,7 +281,7 @@ class Entry(object):
 
             `Egap=2.5`
         """
-        return self._lazy_load("Egap")    
+        return self._lazy_load("Egap")
     
     @property
     def Egap_fit(self):
@@ -233,7 +302,7 @@ class Entry(object):
 
             `Egap_fit=3.5`
         """
-        return self._lazy_load("Egap_fit")    
+        return self._lazy_load("Egap_fit")
     
     @property
     def Egap_type(self):
@@ -254,7 +323,7 @@ class Entry(object):
 
             `Egap_type=insulator_direct`
         """
-        return self._lazy_load("Egap_type")    
+        return self._lazy_load("Egap_type")
     
     @property
     def PV_atom(self):
@@ -275,7 +344,7 @@ class Entry(object):
 
             `PV_atom=12.13`
         """
-        return self._lazy_load("PV_atom")    
+        return self._lazy_load("PV_atom")
     
     @property
     def PV_cell(self):
@@ -296,7 +365,7 @@ class Entry(object):
 
             `PV_cell=12.13`
         """
-        return self._lazy_load("PV_cell")    
+        return self._lazy_load("PV_cell")
     
     @property
     def Pearson_symbol_orig(self):
@@ -313,7 +382,7 @@ class Entry(object):
 
             `Pearson_symbol_orig=mS32`
         """
-        return self._lazy_load("Pearson_symbol_orig")    
+        return self._lazy_load("Pearson_symbol_orig")
     
     @property
     def Pearson_symbol_relax(self):
@@ -333,7 +402,7 @@ class Entry(object):
 
             `Pearson_symbol_relax=mS32`
         """
-        return self._lazy_load("Pearson_symbol_relax")    
+        return self._lazy_load("Pearson_symbol_relax")
     
     @property
     def Pulay_stress(self):
@@ -351,7 +420,7 @@ class Entry(object):
 
             `pulay_stress=10.0`
         """
-        return self._lazy_load("Pulay_stress")    
+        return self._lazy_load("Pulay_stress")
     
     @property
     def Pullay_stress(self):
@@ -369,7 +438,7 @@ class Entry(object):
 
             `Pullay_stress=10.0`
         """
-        return self._lazy_load("Pullay_stress")    
+        return self._lazy_load("Pullay_stress")
     
     @property
     def ael_bulk_modulus_reuss(self):
@@ -390,7 +459,7 @@ class Entry(object):
 
             `ael_bulk_modulus_reuss=105.315`
         """
-        return self._lazy_load("ael_bulk_modulus_reuss")    
+        return self._lazy_load("ael_bulk_modulus_reuss")
     
     @property
     def ael_bulk_modulus_voigt(self):
@@ -411,7 +480,7 @@ class Entry(object):
 
             `ael_bulk_modulus_voiht=105.315`
         """
-        return self._lazy_load("ael_bulk_modulus_voigt")    
+        return self._lazy_load("ael_bulk_modulus_voigt")
     
     @property
     def ael_bulk_modulus_vrh(self):
@@ -432,7 +501,7 @@ class Entry(object):
 
             `ael_bulk_modulus_vrh=105.315`
         """
-        return self._lazy_load("ael_bulk_modulus_vrh")    
+        return self._lazy_load("ael_bulk_modulus_vrh")
     
     @property
     def ael_elastic_anistropy(self):
@@ -453,7 +522,7 @@ class Entry(object):
 
             `ael_elastic_anistropy=0.0008165`
         """
-        return self._lazy_load("ael_elastic_anistropy")    
+        return self._lazy_load("ael_elastic_anistropy")
     
     @property
     def ael_poisson_ratio(self):
@@ -474,7 +543,7 @@ class Entry(object):
 
             `ael_poisson_ratio=0.216`
         """
-        return self._lazy_load("ael_poisson_ratio")    
+        return self._lazy_load("ael_poisson_ratio")
     
     @property
     def ael_shear_modulus_reuss(self):
@@ -495,7 +564,7 @@ class Entry(object):
 
             `ael_shear_modulus_reuss=73.787`
         """
-        return self._lazy_load("ael_shear_modulus_reuss")    
+        return self._lazy_load("ael_shear_modulus_reuss")
     
     @property
     def ael_shear_modulus_voigt(self):
@@ -516,7 +585,7 @@ class Entry(object):
 
             `ael_shear_modulus_voigt=73.799`
         """
-        return self._lazy_load("ael_shear_modulus_voigt")    
+        return self._lazy_load("ael_shear_modulus_voigt")
     
     @property
     def ael_shear_modulus_vrh(self):
@@ -537,7 +606,7 @@ class Entry(object):
 
             `ael_shear_modulus_vrh=73.793`
         """
-        return self._lazy_load("ael_shear_modulus_vrh")    
+        return self._lazy_load("ael_shear_modulus_vrh")
     
     @property
     def aflow_version(self):
@@ -554,7 +623,7 @@ class Entry(object):
 
             `aflow_version=aflow30641`
         """
-        return self._lazy_load("aflow_version")    
+        return self._lazy_load("aflow_version")
     
     @property
     def aflowlib_date(self):
@@ -571,7 +640,7 @@ class Entry(object):
 
             `aflowlib_date=20140204_13:10:39_GMT-5`
         """
-        return self._lazy_load("aflowlib_date")    
+        return self._lazy_load("aflowlib_date")
     
     @property
     def aflowlib_entries(self):
@@ -588,7 +657,7 @@ class Entry(object):
 
             `aflowlib_entries=AgAl,AgAs,AgAu,AgB_h,AgBa_sv,AgBe_sv,AgBi_d,AgBr,AgCa_sv,...`
         """
-        return self._lazy_load("aflowlib_entries")    
+        return self._lazy_load("aflowlib_entries")
     
     @property
     def aflowlib_entries_number(self):
@@ -605,7 +674,7 @@ class Entry(object):
 
             `aflowlib_entries_number=654`
         """
-        return self._lazy_load("aflowlib_entries_number")    
+        return self._lazy_load("aflowlib_entries_number")
     
     @property
     def aflowlib_version(self):
@@ -622,7 +691,7 @@ class Entry(object):
 
             `aflowlib_version=3.1.103`
         """
-        return self._lazy_load("aflowlib_version")    
+        return self._lazy_load("aflowlib_version")
     
     @property
     def agl_acoustic_debye(self):
@@ -643,7 +712,7 @@ class Entry(object):
 
             `agl_acoustic_debye=492`
         """
-        return self._lazy_load("agl_acoustic_debye")    
+        return self._lazy_load("agl_acoustic_debye")
     
     @property
     def agl_bulk_modulus_isothermal_300K(self):
@@ -664,7 +733,7 @@ class Entry(object):
 
             `agl_bulk_modulus_isothermal_300K=96.6`
         """
-        return self._lazy_load("agl_bulk_modulus_isothermal_300K")    
+        return self._lazy_load("agl_bulk_modulus_isothermal_300K")
     
     @property
     def agl_bulk_modulus_static_300K(self):
@@ -685,7 +754,7 @@ class Entry(object):
 
             `agl_bulk_modulus_static_300K=99.6`
         """
-        return self._lazy_load("agl_bulk_modulus_static_300K")    
+        return self._lazy_load("agl_bulk_modulus_static_300K")
     
     @property
     def agl_debye(self):
@@ -706,7 +775,7 @@ class Entry(object):
 
             `agl_debye=620`
         """
-        return self._lazy_load("agl_debye")    
+        return self._lazy_load("agl_debye")
     
     @property
     def agl_gruneisen(self):
@@ -727,7 +796,7 @@ class Entry(object):
 
             `agl_gruneisen=2.06`
         """
-        return self._lazy_load("agl_gruneisen")    
+        return self._lazy_load("agl_gruneisen")
     
     @property
     def agl_heat_capacity_Cp_300K(self):
@@ -748,7 +817,7 @@ class Entry(object):
 
             `agl_heat_capacity_Cp_300K=5.502`
         """
-        return self._lazy_load("agl_heat_capacity_Cp_300K")    
+        return self._lazy_load("agl_heat_capacity_Cp_300K")
     
     @property
     def agl_heat_capacity_Cv_300K(self):
@@ -769,7 +838,7 @@ class Entry(object):
 
             `agl_heat_capacity_Cv_300K=4.901`
         """
-        return self._lazy_load("agl_heat_capacity_Cv_300K")    
+        return self._lazy_load("agl_heat_capacity_Cv_300K")
     
     @property
     def agl_thermal_conductivity_300K(self):
@@ -790,7 +859,7 @@ class Entry(object):
 
             `agl_thermal_conductivity_300K=24.41`
         """
-        return self._lazy_load("agl_thermal_conductivity_300K")    
+        return self._lazy_load("agl_thermal_conductivity_300K")
     
     @property
     def agl_thermal_expansion_300K(self):
@@ -811,7 +880,7 @@ class Entry(object):
 
             `agl_thermal_expansion_300K=4.997e-05`
         """
-        return self._lazy_load("agl_thermal_expansion_300K")    
+        return self._lazy_load("agl_thermal_expansion_300K")
     
     @property
     def auid(self):
@@ -828,7 +897,7 @@ class Entry(object):
 
             `auid=aflow:e9c6d914c4b8d9ca`
         """
-        return self._lazy_load("auid")    
+        return self._lazy_load("auid")
     
     @property
     def aurl(self):
@@ -845,7 +914,7 @@ class Entry(object):
 
             `aurl=aflowlib.duke.edu:AFLOWDATA/LIB3_RAW/Bi_dRh_pvTi_sv/T0003.ABC:LDAU2`
         """
-        return self._lazy_load("aurl")    
+        return self._lazy_load("aurl")
     
     @property
     def author(self):
@@ -863,7 +932,7 @@ class Entry(object):
 
             `author=Marco_Buongiorno_Nardelli,Ohad_Levy,Jesus_Carrete`
         """
-        return self._lazy_load("author")    
+        return self._lazy_load("author")
     
     @property
     def bader_atomic_volumes(self):
@@ -884,7 +953,7 @@ class Entry(object):
 
             `bader_atomic_volumes=15.235,12.581,13.009`
         """
-        return self._lazy_load("bader_atomic_volumes")    
+        return self._lazy_load("bader_atomic_volumes")
     
     @property
     def bader_net_charges(self):
@@ -905,7 +974,7 @@ class Entry(object):
 
             `bader_net_charges=0.125,0.125,-0.25`
         """
-        return self._lazy_load("bader_net_charges")    
+        return self._lazy_load("bader_net_charges")
     
     @property
     def calculation_cores(self):
@@ -926,7 +995,7 @@ class Entry(object):
 
             `calculation_cores=32`
         """
-        return self._lazy_load("calculation_cores")    
+        return self._lazy_load("calculation_cores")
     
     @property
     def calculation_memory(self):
@@ -947,7 +1016,7 @@ class Entry(object):
 
             `calculation_memory=32`
         """
-        return self._lazy_load("calculation_memory")    
+        return self._lazy_load("calculation_memory")
     
     @property
     def calculation_time(self):
@@ -968,7 +1037,7 @@ class Entry(object):
 
             `calculation_time=32`
         """
-        return self._lazy_load("calculation_time")    
+        return self._lazy_load("calculation_time")
     
     @property
     def catalog(self):
@@ -985,7 +1054,7 @@ class Entry(object):
 
             `catalog=icsd`
         """
-        return self._lazy_load("catalog")    
+        return self._lazy_load("catalog")
     
     @property
     def code(self):
@@ -1002,7 +1071,7 @@ class Entry(object):
 
             `code=vasp.4.6.35`
         """
-        return self._lazy_load("code")    
+        return self._lazy_load("code")
     
     @property
     def composition(self):
@@ -1019,7 +1088,7 @@ class Entry(object):
 
             `composition=2,6,6`
         """
-        return self._lazy_load("composition")    
+        return self._lazy_load("composition")
     
     @property
     def compound(self):
@@ -1036,7 +1105,7 @@ class Entry(object):
 
             `compound=Co2Er6Si6`
         """
-        return self._lazy_load("compound")    
+        return self._lazy_load("compound")
     
     @property
     def corresponding(self):
@@ -1054,7 +1123,7 @@ class Entry(object):
 
             `corresponding=M_Buongiorno_Nardelli_mbn@unt.edu`
         """
-        return self._lazy_load("corresponding")    
+        return self._lazy_load("corresponding")
     
     @property
     def data_api(self):
@@ -1071,7 +1140,7 @@ class Entry(object):
 
             `data_api=aapi1.0`
         """
-        return self._lazy_load("data_api")    
+        return self._lazy_load("data_api")
     
     @property
     def data_language(self):
@@ -1088,7 +1157,7 @@ class Entry(object):
 
             `data_language=aflowlib`
         """
-        return self._lazy_load("data_language")    
+        return self._lazy_load("data_language")
     
     @property
     def data_source(self):
@@ -1105,7 +1174,7 @@ class Entry(object):
 
             `data_source=aflowlib`
         """
-        return self._lazy_load("data_source")    
+        return self._lazy_load("data_source")
     
     @property
     def delta_electronic_energy_convergence(self):
@@ -1123,7 +1192,7 @@ class Entry(object):
 
             `delta_electronic_energy_convergence=6.09588e-05`
         """
-        return self._lazy_load("delta_electronic_energy_convergence")    
+        return self._lazy_load("delta_electronic_energy_convergence")
     
     @property
     def delta_electronic_energy_threshold(self):
@@ -1141,7 +1210,7 @@ class Entry(object):
 
             `delta_electronic_energy_threshold=0.0001`
         """
-        return self._lazy_load("delta_electronic_energy_threshold")    
+        return self._lazy_load("delta_electronic_energy_threshold")
     
     @property
     def density(self):
@@ -1164,7 +1233,7 @@ class Entry(object):
 
             `density=7.76665`
         """
-        return self._lazy_load("density")    
+        return self._lazy_load("density")
     
     @property
     def dft_type(self):
@@ -1181,7 +1250,7 @@ class Entry(object):
 
             `dft_type=PAW_PBE,HSE06`
         """
-        return self._lazy_load("dft_type")    
+        return self._lazy_load("dft_type")
     
     @property
     def eentropy_atom(self):
@@ -1202,7 +1271,7 @@ class Entry(object):
 
             `eentropy_atom=0.0011`
         """
-        return self._lazy_load("eentropy_atom")    
+        return self._lazy_load("eentropy_atom")
     
     @property
     def eentropy_cell(self):
@@ -1223,7 +1292,7 @@ class Entry(object):
 
             `eentropy_cell=0.0011`
         """
-        return self._lazy_load("eentropy_cell")    
+        return self._lazy_load("eentropy_cell")
     
     @property
     def energy_atom(self):
@@ -1246,7 +1315,7 @@ class Entry(object):
 
             `energy_atom=-82.1656`
         """
-        return self._lazy_load("energy_atom")    
+        return self._lazy_load("energy_atom")
     
     @property
     def energy_cell(self):
@@ -1269,7 +1338,7 @@ class Entry(object):
 
             `energy_cell=-82.1656`
         """
-        return self._lazy_load("energy_cell")    
+        return self._lazy_load("energy_cell")
     
     @property
     def energy_cutoff(self):
@@ -1286,7 +1355,7 @@ class Entry(object):
 
             `energy_cutoff=384.1,384.1,384.1`
         """
-        return self._lazy_load("energy_cutoff")    
+        return self._lazy_load("energy_cutoff")
     
     @property
     def enthalpy_atom(self):
@@ -1309,7 +1378,7 @@ class Entry(object):
 
             `enthalpy_atom=-82.1656`
         """
-        return self._lazy_load("enthalpy_atom")    
+        return self._lazy_load("enthalpy_atom")
     
     @property
     def enthalpy_cell(self):
@@ -1332,7 +1401,7 @@ class Entry(object):
 
             `enthalpy_cell=-82.1656`
         """
-        return self._lazy_load("enthalpy_cell")    
+        return self._lazy_load("enthalpy_cell")
     
     @property
     def enthalpy_formation_atom(self):
@@ -1353,7 +1422,7 @@ class Entry(object):
 
             `enthalpy_formation_atom=-33.1587`
         """
-        return self._lazy_load("enthalpy_formation_atom")    
+        return self._lazy_load("enthalpy_formation_atom")
     
     @property
     def enthalpy_formation_cell(self):
@@ -1374,7 +1443,7 @@ class Entry(object):
 
             `enthalpy_formation_cell=-33.1587`
         """
-        return self._lazy_load("enthalpy_formation_cell")    
+        return self._lazy_load("enthalpy_formation_cell")
     
     @property
     def entropic_temperature(self):
@@ -1395,24 +1464,8 @@ class Entry(object):
 
             `entropic_temperature=1072.1`
         """
-        return self._lazy_load("entropic_temperature")    
+        return self._lazy_load("entropic_temperature")
     
-    @property
-    def files(self):
-        """I/O files (`conditional`). Units: ``.
-        
-        
-        
-
-        Returns:
-            list: Provides access to the input and output files used in the simulation (provenance data).
-        
-        Examples:
-            You can expect the *content* of the result to be something like:
-
-            `files=Bi_dRh_pv.33.cif,Bi_dRh_pv.33.png,CONTCAR.relax,CONTCAR.relax1,`
-        """
-        return self._lazy_load("files")    
     
     @property
     def forces(self):
@@ -1434,7 +1487,7 @@ class Entry(object):
 
             `forces=0,-0.023928,0.000197;0,0.023928,-0.000197;...`
         """
-        return self._lazy_load("forces")    
+        return self._lazy_load("forces")
     
     @property
     def geometry(self):
@@ -1457,7 +1510,7 @@ class Entry(object):
 
             `geometry=18.82,18.82,18.82,32.41,32.41,32.41`
         """
-        return self._lazy_load("geometry")    
+        return self._lazy_load("geometry")
     
     @property
     def keywords(self):
@@ -1475,7 +1528,7 @@ class Entry(object):
 
             `keywords=aurl,auid,loop,code,compound,prototype,nspecies,natoms,...`
         """
-        return self._lazy_load("keywords")    
+        return self._lazy_load("keywords")
     
     @property
     def kpoints(self):
@@ -1492,7 +1545,7 @@ class Entry(object):
 
             `kpoints=10,10,10;16,16,16;G-X-W-K-G-L-U-W-L-K+U-X`
         """
-        return self._lazy_load("kpoints")    
+        return self._lazy_load("kpoints")
     
     @property
     def lattice_system_orig(self):
@@ -1509,7 +1562,7 @@ class Entry(object):
 
             `lattice_system_orig=rhombohedral`
         """
-        return self._lazy_load("lattice_system_orig")    
+        return self._lazy_load("lattice_system_orig")
     
     @property
     def lattice_system_relax(self):
@@ -1532,7 +1585,7 @@ class Entry(object):
 
             `lattice_system_relax=rhombohedral`
         """
-        return self._lazy_load("lattice_system_relax")    
+        return self._lazy_load("lattice_system_relax")
     
     @property
     def lattice_variation_orig(self):
@@ -1549,7 +1602,7 @@ class Entry(object):
 
             `lattice_variation_orig=rhombohedral`
         """
-        return self._lazy_load("lattice_variation_orig")    
+        return self._lazy_load("lattice_variation_orig")
     
     @property
     def lattice_variation_relax(self):
@@ -1572,7 +1625,7 @@ class Entry(object):
 
             `lattice_variation_relax=rhombohedral`
         """
-        return self._lazy_load("lattice_variation_relax")    
+        return self._lazy_load("lattice_variation_relax")
     
     @property
     def ldau_TLUJ(self):
@@ -1590,7 +1643,7 @@ class Entry(object):
 
             `ldau_TLUJ=2;2,0,0;5,0,0;0,0,0`
         """
-        return self._lazy_load("ldau_TLUJ")    
+        return self._lazy_load("ldau_TLUJ")
     
     @property
     def loop(self):
@@ -1607,7 +1660,7 @@ class Entry(object):
 
             `loop=thermodynamics,bands,magnetic`
         """
-        return self._lazy_load("loop")    
+        return self._lazy_load("loop")
     
     @property
     def natoms(self):
@@ -1624,7 +1677,7 @@ class Entry(object):
 
             `natoms=12`
         """
-        return self._lazy_load("natoms")    
+        return self._lazy_load("natoms")
     
     @property
     def nbondxx(self):
@@ -1648,7 +1701,7 @@ class Entry(object):
 
             `nbondxx=1.2599,1.0911,1.0911,1.7818,1.2599,1.7818`
         """
-        return self._lazy_load("nbondxx")    
+        return self._lazy_load("nbondxx")
     
     @property
     def node_CPU_Cores(self):
@@ -1665,7 +1718,7 @@ class Entry(object):
 
             `node_CPU_Cores=12`
         """
-        return self._lazy_load("node_CPU_Cores")    
+        return self._lazy_load("node_CPU_Cores")
     
     @property
     def node_CPU_MHz(self):
@@ -1682,7 +1735,7 @@ class Entry(object):
 
             `node_CPU_MHz=12`
         """
-        return self._lazy_load("node_CPU_MHz")    
+        return self._lazy_load("node_CPU_MHz")
     
     @property
     def node_CPU_Model(self):
@@ -1699,7 +1752,7 @@ class Entry(object):
 
             `node_CPU_Model=12`
         """
-        return self._lazy_load("node_CPU_Model")    
+        return self._lazy_load("node_CPU_Model")
     
     @property
     def node_RAM_GB(self):
@@ -1716,7 +1769,7 @@ class Entry(object):
 
             `node_RAM_GB=12`
         """
-        return self._lazy_load("node_RAM_GB")    
+        return self._lazy_load("node_RAM_GB")
     
     @property
     def nspecies(self):
@@ -1733,7 +1786,7 @@ class Entry(object):
 
             `nspecies=3`
         """
-        return self._lazy_load("nspecies")    
+        return self._lazy_load("nspecies")
     
     @property
     def positions_cartesian(self):
@@ -1758,7 +1811,7 @@ class Entry(object):
 
             `positions_cartesian=0,0,0;18.18438,0,2.85027;...`
         """
-        return self._lazy_load("positions_cartesian")    
+        return self._lazy_load("positions_cartesian")
     
     @property
     def positions_fractional(self):
@@ -1783,7 +1836,7 @@ class Entry(object):
 
             `positions_fractional=0,0,0;0.25,0.25,0.25;...`
         """
-        return self._lazy_load("positions_fractional")    
+        return self._lazy_load("positions_fractional")
     
     @property
     def pressure(self):
@@ -1800,7 +1853,7 @@ class Entry(object):
 
             `pressure=10.0`
         """
-        return self._lazy_load("pressure")    
+        return self._lazy_load("pressure")
     
     @property
     def pressure_final(self):
@@ -1818,7 +1871,7 @@ class Entry(object):
 
             `pressure_final=10.0`
         """
-        return self._lazy_load("pressure_final")    
+        return self._lazy_load("pressure_final")
     
     @property
     def pressure_residual(self):
@@ -1836,7 +1889,7 @@ class Entry(object):
 
             `pressure_residual=10.0`
         """
-        return self._lazy_load("pressure_residual")    
+        return self._lazy_load("pressure_residual")
     
     @property
     def prototype(self):
@@ -1853,7 +1906,7 @@ class Entry(object):
 
             `prototype=T0001.A2BC`
         """
-        return self._lazy_load("prototype")    
+        return self._lazy_load("prototype")
     
     @property
     def scintillation_attenuation_length(self):
@@ -1874,7 +1927,7 @@ class Entry(object):
 
             `scintillation_attenuation_length=2.21895`
         """
-        return self._lazy_load("scintillation_attenuation_length")    
+        return self._lazy_load("scintillation_attenuation_length")
     
     @property
     def sg(self):
@@ -1897,7 +1950,7 @@ class Entry(object):
 
             `sg=Fm-3m#225,Fm-3m#225,Fm-3m#225`
         """
-        return self._lazy_load("sg")    
+        return self._lazy_load("sg")
     
     @property
     def sg2(self):
@@ -1920,7 +1973,7 @@ class Entry(object):
 
             `sg2=Fm-3m#225,Fm-3m#225,Fm-3m#225`
         """
-        return self._lazy_load("sg2")    
+        return self._lazy_load("sg2")
     
     @property
     def spacegroup_orig(self):
@@ -1937,7 +1990,7 @@ class Entry(object):
 
             `spacegroup_orig=225`
         """
-        return self._lazy_load("spacegroup_orig")    
+        return self._lazy_load("spacegroup_orig")
     
     @property
     def spacegroup_relax(self):
@@ -1960,7 +2013,7 @@ class Entry(object):
 
             `spacegroup_relax=225`
         """
-        return self._lazy_load("spacegroup_relax")    
+        return self._lazy_load("spacegroup_relax")
     
     @property
     def species(self):
@@ -1977,7 +2030,7 @@ class Entry(object):
 
             `species=Y,Zn,Zr`
         """
-        return self._lazy_load("species")    
+        return self._lazy_load("species")
     
     @property
     def species_pp(self):
@@ -1994,7 +2047,7 @@ class Entry(object):
 
             `species_pp=Y,Zn,Zr`
         """
-        return self._lazy_load("species_pp")    
+        return self._lazy_load("species_pp")
     
     @property
     def species_pp_ZVAL(self):
@@ -2011,7 +2064,7 @@ class Entry(object):
 
             `species_pp_ZVAL=3`
         """
-        return self._lazy_load("species_pp_ZVAL")    
+        return self._lazy_load("species_pp_ZVAL")
     
     @property
     def species_pp_version(self):
@@ -2028,7 +2081,7 @@ class Entry(object):
 
             `species_pp_version=Y,Zn,Zr`
         """
-        return self._lazy_load("species_pp_version")    
+        return self._lazy_load("species_pp_version")
     
     @property
     def spinD(self):
@@ -2049,7 +2102,7 @@ class Entry(object):
 
             `spinD=0.236,0.236,-0.023,1.005`
         """
-        return self._lazy_load("spinD")    
+        return self._lazy_load("spinD")
     
     @property
     def spinF(self):
@@ -2070,7 +2123,7 @@ class Entry(object):
 
             `spinF=0.410879`
         """
-        return self._lazy_load("spinF")    
+        return self._lazy_load("spinF")
     
     @property
     def spin_atom(self):
@@ -2091,7 +2144,7 @@ class Entry(object):
 
             `spin_atom=2.16419`
         """
-        return self._lazy_load("spin_atom")    
+        return self._lazy_load("spin_atom")
     
     @property
     def spin_cell(self):
@@ -2112,7 +2165,7 @@ class Entry(object):
 
             `spin_cell=2.16419`
         """
-        return self._lazy_load("spin_cell")    
+        return self._lazy_load("spin_cell")
     
     @property
     def sponsor(self):
@@ -2130,7 +2183,7 @@ class Entry(object):
 
             `sponsor=DOD_N000141310635,NIST_70NANB12H163`
         """
-        return self._lazy_load("sponsor")    
+        return self._lazy_load("sponsor")
     
     @property
     def stoich(self):
@@ -2152,7 +2205,7 @@ class Entry(object):
 
             `stoichiometry=0.5,0.25,0.25`
         """
-        return self._lazy_load("stoich")    
+        return self._lazy_load("stoich")
     
     @property
     def stoichiometry(self):
@@ -2173,7 +2226,7 @@ class Entry(object):
 
             `stoichiometry=0.5,0.25,0.25`
         """
-        return self._lazy_load("stoichiometry")    
+        return self._lazy_load("stoichiometry")
     
     @property
     def stress_tensor(self):
@@ -2191,7 +2244,7 @@ class Entry(object):
 
             `stress_tensor=-0.96,-0,-0,-0,-0.96,-0,-0,-0,-0.96`
         """
-        return self._lazy_load("stress_tensor")    
+        return self._lazy_load("stress_tensor")
     
     @property
     def valence_cell_iupac(self):
@@ -2212,7 +2265,7 @@ class Entry(object):
 
             `valence_cell_iupac=22`
         """
-        return self._lazy_load("valence_cell_iupac")    
+        return self._lazy_load("valence_cell_iupac")
     
     @property
     def valence_cell_std(self):
@@ -2233,7 +2286,7 @@ class Entry(object):
 
             `valence_cell_std=22`
         """
-        return self._lazy_load("valence_cell_std")    
+        return self._lazy_load("valence_cell_std")
     
     @property
     def volume_atom(self):
@@ -2257,7 +2310,7 @@ class Entry(object):
 
             `volume_atom=100.984`
         """
-        return self._lazy_load("volume_atom")    
+        return self._lazy_load("volume_atom")
     
     @property
     def volume_cell(self):
@@ -2281,5 +2334,5 @@ class Entry(object):
 
             `volume_cell=100.984`
         """
-        return self._lazy_load("volume_cell")    
+        return self._lazy_load("volume_cell")
     
