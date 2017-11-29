@@ -1,6 +1,7 @@
 """Tests that :class:`aflow.entries.Entry` objects have the correct
 attributes and that lazy fetching works correctly.
 """
+import pytest
 def test_eq_hash(paper):
     """Tests equality and hashing of database entries.
     """
@@ -9,6 +10,23 @@ def test_eq_hash(paper):
     assert a == a
     assert hash(a) == hash(a.auid)
     assert "http://aflowlib.duke.edu/AFLOWDATA" in str(a)
+
+def test_files(paper, tmpdir):
+    from aflow.entries import AflowFile
+    from os import path
+    a = paper[0]
+    assert isinstance(a.files, list)
+    assert len(a.files) > 0
+    assert isinstance(a.files[0], AflowFile)
+    contents = a.files[0]()
+    assert len(contents) > 20
+    first = a.files[0].filename
+    target = str(tmpdir.join("files_contcar"))
+    a.files[first](target)
+    assert path.isfile(target)
+
+    with pytest.raises(KeyError):
+        a.files["dummy"]
     
 def test_atoms(paper):
     from aflow import K
