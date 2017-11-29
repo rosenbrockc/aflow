@@ -1,5 +1,10 @@
 # `aflow` Revision History
 
+## Revision 0.0.7
+
+- Added support for easy file downloading via the database `Entry.files` attribute.
+- Added additional examples to the documentation.
+
 ## Revision 0.0.6
 
 - Fixed a bug in AFLUX handling of multiple instances of same keyword with complex logical conditions.
