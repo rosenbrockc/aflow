@@ -15,6 +15,7 @@ def _get_reporoot():
 
 def load_module(modname, modpath, search_locs=None):
     """Loads the module specification and returns it as a python object.
+
     Args:
         modname (str): name that the module should be loaded under.
         modpath (str): full path to the code file in which the module is
