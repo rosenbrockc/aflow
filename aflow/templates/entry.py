@@ -78,7 +78,9 @@ class AflowFiles(list):
             else:
                 raise KeyError("Pattern matches more than one file.")
         else:
-            super(AflowFiles, self).__getitem__(key)    
+            match = super(AflowFiles, self).__getitem__(key).strip()
+            return AflowFile(self.aurl, match)
+            
     
 class Entry(object):
     """Encapsulates the result of a single material entry in the AFLOW
