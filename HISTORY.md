@@ -1,5 +1,9 @@
 # `aflow` Revision History
 
+## Revision 0.0.8
+
+- Fixed a bug that showed the wrong number of configs for `__len__` when slices are used.
+
 ## Revision 0.0.7
 
 - Added support for easy file downloading via the database `Entry.files` attribute.

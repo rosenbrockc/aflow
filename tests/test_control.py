@@ -5,7 +5,7 @@ import pytest
 def test_len(paper):
     """Tests the code to get the length of a query.
     """
-    assert len(paper) > 900
+    assert paper.N > 900
 
 def test_iter(paper):
     """Tests the iterator over individual results in the search

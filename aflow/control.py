@@ -106,7 +106,7 @@ class Query(object):
             return self._max_entry
     
     def __len__(self):
-        return self.N
+        return self.max_N
 
     def __getitem__(self, seq):
         #We need to trigger the first request to make sure that the total
