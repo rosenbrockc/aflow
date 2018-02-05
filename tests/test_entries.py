@@ -13,7 +13,7 @@ def test_eq_hash(paper):
 
 def test_files(paper, tmpdir):
     from aflow.entries import AflowFile
-    from os import path
+    from os import path, remove
     a = paper[0]
     assert isinstance(a.files, list)
     assert len(a.files) > 0
@@ -27,6 +27,17 @@ def test_files(paper, tmpdir):
 
     with pytest.raises(KeyError):
         a.files["dummy"]
+
+    a = AflowFile('aflowlib.duke.edu:AFLOWDATA/ICSD_WEB/FCC/Be1O1_ICSD_163467',
+                  'EIGENVAL.bands.bz2')
+    a.__call__()
+
+    target = path.abspath(path.expanduser('EIGENVAL.bands.bz2'))
+    assert path.isfile(target)
+    remove(target)
+    target = str(tmpdir.join("eigenval.bz2"))
+    a.__call__(target)
+    assert path.isfile(target)    
     
 def test_atoms(paper):
     from aflow import K
