@@ -41,18 +41,33 @@ class AflowFile(object):
               contents of the file are returned as a string.
         """       
         from six.moves import urllib
-        urlopen = urllib.request.urlopen
+        # Not all files can be decoded and displayed in the
+        # terminal. If they can't be then we save them to disk
+        # instead.
         url = "http://{}/{}".format(self.aurl.replace(':', '/'), self.filename)
-        rawresp = urlopen(url).read().decode("utf-8")
+        try:
+            urlopen = urllib.request.urlopen
+            rawresp = urlopen(url).read().decode("utf-8")
 
-        if target is not None:
+            if target is not None:
+                from os import path
+                tpath = path.abspath(path.expanduser(target))
+                with open(tpath, 'w') as f:
+                    f.write(rawresp)
+                    return tpath
+            else:
+                return rawresp
+        except:
+            urlopen = urllib.request
             from os import path
-            tpath = path.abspath(path.expanduser(target))
-            with open(tpath, 'w') as f:
-                f.write(rawresp)
-            return tpath
-        else:
-            return rawresp
+            from aflow.msg import info
+            if target is not None:
+                tpath = path.abspath(path.expanduser(target))
+            else:
+                tpath = path.abspath(path.expanduser(self.filename))
+            urlopen.urlretrieve(url,tpath)
+            infomsg = "The file {0} has been saved to {1}".format(self.filename,tpath)
+            info(infomsg)
     
 class AflowFiles(list):
     """Represents a collection of files for an entry in AFLOW and allows easy

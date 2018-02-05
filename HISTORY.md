@@ -1,5 +1,9 @@
 # `aflow` Revision History
 
+## Revision 0.0.9
+
+- Fixed a bug that prevented "bz2" and "png" files from being downloaded.
+
 ## Revision 0.0.8
 
 - Fixed a bug that showed the wrong number of configs for `__len__` when slices are used.
