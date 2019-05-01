@@ -12,8 +12,6 @@ def _val_from_str(attr, value):
     if hasattr(kw, clsname):
         cls = getattr(kw, clsname)
         atype = getattr(cls, "atype")
-        if attr == "kpoints":
-            print(atype, attr, value)
         return cast(atype, attr, value)
     else:
         return value
@@ -520,8 +518,8 @@ class Entry(object):
         return self._lazy_load("ael_bulk_modulus_vrh")
     
     @property
-    def ael_elastic_anistropy(self):
-        """AEL elastic anistropy (`optional`). Units: ``.
+    def ael_elastic_anisotropy(self):
+        """AEL elastic anisotropy (`optional`). Units: ``.
         
         
         .. note:: The following verifications are available for this
@@ -531,14 +529,14 @@ class Entry(object):
           - :meth:`kpoints`
 
         Returns:
-            float: Returns the elastic anistropy as calculated with AEL.
+            float: Returns the elastic anisotropy as calculated with AEL.
         
         Examples:
             You can expect the *content* of the result to be something like:
 
-            `ael_elastic_anistropy=0.0008165`
+            `ael_elastic_anisotropy=0.0008165`
         """
-        return self._lazy_load("ael_elastic_anistropy")
+        return self._lazy_load("ael_elastic_anisotropy")
     
     @property
     def ael_poisson_ratio(self):

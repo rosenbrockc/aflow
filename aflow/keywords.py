@@ -399,20 +399,20 @@ class _ael_bulk_modulus_vrh(Keyword):
 
 ael_bulk_modulus_vrh = _ael_bulk_modulus_vrh()
     
-class _ael_elastic_anistropy(Keyword):
-    """AEL elastic anistropy (`optional`). Units: ``.
+class _ael_elastic_anisotropy(Keyword):
+    """AEL elastic anisotropy (`optional`). Units: ``.
     
     
 
     Returns:
-        float: Returns the elastic anistropy as calculated with AEL.
+        float: Returns the elastic anisotropy as calculated with AEL.
         
     """
-    name = "ael_elastic_anistropy"
+    name = "ael_elastic_anisotropy"
     ptype = float
     atype = "number"
 
-ael_elastic_anistropy = _ael_elastic_anistropy()
+ael_elastic_anisotropy = _ael_elastic_anisotropy()
     
 class _ael_poisson_ratio(Keyword):
     """AEL Poisson ratio (`optional`). Units: ``.
@@ -1287,7 +1287,7 @@ class _ldau_TLUJ(Keyword):
         
     """
     name = "ldau_TLUJ"
-    ptype = list
+    ptype = dict
     atype = "numbers"
 
 ldau_TLUJ = _ldau_TLUJ()
