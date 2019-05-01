@@ -180,19 +180,19 @@ class Keyword(object):
 
     def __invert__(self):
         target = None
-        if len(self.state) == 1:
-            target = self.state
-        elif len(self.cache) == 1:
+        if len(self.cache) > 0:
             target = self.cache
+        elif len(self.state) > 0:
+            target = self.state
 
         assert target is not None
 
-        if '(' in target[0]:
-            target[0] = target[0].replace('(', "(!")
+        if '(' in target[-1]:
+            target[-1] = target[-1].replace('(', "(!")
         else:
-            target[0] = '!' + target[0]
+            target[-1] = '!' + target[-1]
 
-        target[0] = target[0].replace("!!", "")
+        target[-1] = target[-1].replace("!!", "")
         return self    
     
     
