@@ -9,7 +9,7 @@ def paper():
     import aflow.keywords as kw
     result = aflow.search(batch_size=20
         ).select(kw.agl_thermal_conductivity_300K
-        ).filter(kw.Egap > 6).orderby(kw.agl_thermal_conductivity_300K, True)
+        ).filter(kw.Egap >= 6).orderby(kw.agl_thermal_conductivity_300K, True)
 
     #Let's pre-fill the responses from the saved JSON files so that the tests
     #run faster *and* so that the results are predictable.

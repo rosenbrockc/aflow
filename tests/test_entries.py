@@ -14,13 +14,13 @@ def test_eq_hash(paper):
 def test_files(paper, tmpdir):
     from aflow.entries import AflowFile
     from os import path, remove
-    a = paper[0]
+    a = paper[2]
     assert isinstance(a.files, list)
     assert len(a.files) > 0
-    assert isinstance(a.files[0], AflowFile)
-    contents = a.files[0]()
+    assert isinstance(a.files[4], AflowFile)
+    contents = a.files[4]()
     assert len(contents) > 20
-    first = a.files[0].filename
+    first = a.files[4].filename
     target = str(tmpdir.join("files_contcar"))
     a.files[first](target)
     assert path.isfile(target)
@@ -28,11 +28,11 @@ def test_files(paper, tmpdir):
     with pytest.raises(KeyError):
         a.files["dummy"]
 
-    a = AflowFile('aflowlib.duke.edu:AFLOWDATA/ICSD_WEB/FCC/Be1O1_ICSD_163467',
-                  'EIGENVAL.bands.bz2')
+    a = AflowFile('aflowlib.duke.edu:AFLOWDATA/ICSD_WEB/HEX/Be1O1_ICSD_15620',
+                  'EIGENVAL.bands.xz')
     a.__call__()
 
-    target = path.abspath(path.expanduser('EIGENVAL.bands.bz2'))
+    target = path.abspath(path.expanduser('EIGENVAL.bands.xz'))
     assert path.isfile(target)
     remove(target)
     target = str(tmpdir.join("eigenval.bz2"))
@@ -48,7 +48,7 @@ def test_atoms(paper):
     LJ = LennardJones()
     kw = {}
     kw[K.energy_cell] = "dft_energy"
-    rawentry = paper[0]
+    rawentry = paper[2]
     at = rawentry.atoms(keywords=kw, calculator=LJ)
 
     assert isinstance(at, Atoms)
@@ -59,7 +59,7 @@ def test_atoms(paper):
     at0 = rawentry.atoms(keywords=kw, calculator=LJ)
     assert at0 == at
 
-    at2 = paper[1].atoms(calculator=LJ)
+    at2 = paper[2].atoms(calculator=LJ)
     assert not hasattr(at2, "results")
     
 def test_corner():
