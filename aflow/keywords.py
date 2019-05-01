@@ -89,19 +89,25 @@ class Keyword(object):
         else:
             return s
         
-    def __lt__(self, other):
+    def __le__(self, other):
         if isinstance(other, string_types):
             self.cache.append("*'{0}'".format(other))
         else:
             self.cache.append("*{0}".format(other))
         return self
             
-    def __gt__(self, other):
+    def __ge__(self, other):
         if isinstance(other, string_types):
             self.cache.append("'{0}'*".format(other))
         else:
             self.cache.append("{0}*".format(other))
         return self
+
+    def __lt__(self, other):
+        return ~(self >= other)
+
+    def __gt__(self, other):
+        return ~(self <= other)
 
     def __mod__(self, other):
         assert isinstance(other, string_types)
@@ -114,6 +120,9 @@ class Keyword(object):
         else:
             self.cache.append("{0}".format(other))
         return self
+
+    def __ne__(self, other):
+        return ~(self == other)
 
     def _generic_combine(self, other, token):
         if other is self:
