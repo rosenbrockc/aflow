@@ -90,24 +90,28 @@ class Keyword(object):
             return s
         
     def __le__(self, other):
-        if isinstance(other, string_types):
-            self.cache.append("*'{0}'".format(other))
-        else:
-            self.cache.append("*{0}".format(other))
+        assert not isinstance(other, string_types)
+        self.cache.append("*{0}".format(other))
         return self
             
     def __ge__(self, other):
-        if isinstance(other, string_types):
-            self.cache.append("'{0}'*".format(other))
-        else:
-            self.cache.append("{0}*".format(other))
+        assert not isinstance(other, string_types)
+        self.cache.append("{0}*".format(other))
         return self
 
     def __lt__(self, other):
-        return ~(self >= other)
+        if isinstance(other, string_types):
+            self.cache.append("*'{0}'".format(other))
+        else:
+            return ~(self >= other)
+        return self
 
     def __gt__(self, other):
-        return ~(self <= other)
+        if isinstance(other, string_types):
+            self.cache.append("'{0}'*".format(other))
+        else:
+            return ~(self <= other)
+        return self
 
     def __mod__(self, other):
         assert isinstance(other, string_types)
@@ -175,24 +179,20 @@ class Keyword(object):
         return self._generic_combine(other, ':')
 
     def __invert__(self):
-        assert len(self.state) == 1 or len(self.cache) == 1
-        #The two uncovered cases below are coded for completeness, but we don't
-        #have any tests to trigger them; i.e., they don't come up in normal
-        #operations.
+        target = None
         if len(self.state) == 1:
-            if '!' in self.state[0]:
-                self.state[0] = self.state[0].replace('!', '')
-            elif '(' in self.state[0]:
-                self.state[0] = self.state[0].replace('(', "(!")
-            else:# pragma: no cover
-                self.state[0] = '!' + self.state[0]
+            target = self.state
         elif len(self.cache) == 1:
-            if '!' in self.cache[0]:
-                self.cache[0] = self.cache[0].replace('!', '')
-            elif '(' in self.cache[0]:# pragma: no cover
-                self.cache[0] = self.cache[0].replace('(', "(!")
-            else:
-                self.cache[0] = '!' + self.cache[0]
+            target = self.cache
+
+        assert target is not None
+
+        if '(' in target[0]:
+            target[0] = target[0].replace('(', "(!")
+        else:
+            target[0] = '!' + target[0]
+
+        target[0] = target[0].replace("!!", "")
         return self    
     
     
