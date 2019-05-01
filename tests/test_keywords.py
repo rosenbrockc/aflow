@@ -26,35 +26,86 @@ def test_operators():
     """
     from aflow.keywords import reset
     k0 = (Egap > 6) & (PV_cell < 13)
-    assert str(k0) == 'Egap(6*),PV_cell(*13)'
+    assert str(k0) == 'Egap(!*6),PV_cell(!13*)'
+    assert str(Egap) == 'Egap(!*6)'
+    assert str(PV_cell) == 'PV_cell(!13*)'
+
+    reset()
+
+    from aflow.keywords import reset
+    k1 = (Egap >= 6) & (PV_cell <= 13)
+    assert str(k1) == 'Egap(6*),PV_cell(*13)'
     assert str(Egap) == 'Egap(6*)'
     assert str(PV_cell) == 'PV_cell(*13)'
 
-    k1 = (author == 'stefano') | (species % 'Si')
-    assert str(k1) == "author('stefano'):species(*'Si'*)"
+    reset()
+
+    from aflow.keywords import reset
+    k2 = (Egap == 6) & (PV_cell == 13)
+    assert str(k2) == 'Egap(6),PV_cell(13)'
+    assert str(Egap) == 'Egap(6)'
+    assert str(PV_cell) == 'PV_cell(13)'
+
+    reset()
+
+    from aflow.keywords import reset
+    k3 = (Egap == 6) & (PV_cell != 13)
+    assert str(k3) == 'Egap(6),PV_cell(!13)'
+    assert str(Egap) == 'Egap(6)'
+    assert str(PV_cell) == 'PV_cell(!13)'
+
+    k4 = (author == 'stefano') | (species % 'Si')
+    assert str(k4) == "author('stefano'):species(*'Si'*)"
     assert str(author) == "author('stefano')"
     assert str(species) == "species(*'Si'*)"
 
     reset()
 
-    k3 = (author > 'aflow') & (species < 'Ag')
-    assert str(k3) == "author('aflow'*),species(*'Ag')"
+    k5 = (author > 'aflow') & (species < 'Ag')
+    assert str(k5) == "author('aflow'*),species(*'Ag')"
     assert str(author) == "author('aflow'*)"
     assert str(species) == "species(*'Ag')"
 
 def test_invert():
     """Tests inversion (i.e., negation) of an operator.
     """
+    from aflow.keywords import reset
     k0 = (Egap > 6) & (PV_cell < 13)
-    kn = ~k0
-    assert str(kn) == 'Egap(!6*),PV_cell(!*13)'
+    kn0 = ~k0
+    assert str(kn0) == 'Egap(*6),PV_cell(13*)'
+    assert str(~Egap) == 'Egap(*6)'
+    assert str(~PV_cell) == 'PV_cell(13*)'
+
+    #Now invert everybody back again and see if it is good.
+    assert str(~kn0) == 'Egap(!*6),PV_cell(!13*)'
+    assert str(~Egap) == 'Egap(!*6)'
+    assert str(~PV_cell) == 'PV_cell(!13*)'
+
+    reset()
+
+    k1 = (Egap >= 6) & (PV_cell <= 13)
+    kn1 = ~k1
+    assert str(kn1) == 'Egap(!6*),PV_cell(!*13)'
     assert str(~Egap) == 'Egap(!6*)'
     assert str(~PV_cell) == 'PV_cell(!*13)'
 
-    #Now invert everybody back again and see if it is good.
-    assert str(~kn) == 'Egap(6*),PV_cell(*13)'
+    # Now invert everybody back again and see if it is good.
+    assert str(~kn1) == 'Egap(6*),PV_cell(*13)'
     assert str(~Egap) == 'Egap(6*)'
     assert str(~PV_cell) == 'PV_cell(*13)'
+
+    reset()
+
+    k2 = (Egap == 6) & (PV_cell != 13)
+    kn2 = ~k2
+    assert str(kn2) == 'Egap(!6),PV_cell(13)'
+    assert str(~Egap) == 'Egap(!6)'
+    assert str(~PV_cell) == 'PV_cell(13)'
+
+    # Now invert everybody back again and see if it is good.
+    assert str(~kn2) == 'Egap(6),PV_cell(!13)'
+    assert str(~Egap) == 'Egap(6)'
+    assert str(~PV_cell) == 'PV_cell(!13)'
     
 def test_self():
     """Tests combinations of multiple conditions against the same
@@ -63,23 +114,43 @@ def test_self():
     from aflow.keywords import reset
     reset()
     k0 = ((Egap > 6) | (Egap < 21)) & (PV_cell < 13)
-    assert str(k0) == 'Egap(6*:*21),PV_cell(*13)'
+    assert str(k0) == 'Egap(!*6:!21*),PV_cell(!13*)'
 
     reset()
     k1 = ((Egap > 6) | (Egap < 21)) & ((PV_cell < 13) | (PV_cell > 2))
-    assert str(k1) == 'Egap(6*:*21),PV_cell(*13:2*)'
-    assert str(Egap) == 'Egap(6*:*21)'
-    assert str(PV_cell) == 'PV_cell(*13:2*)'
+    assert str(k1) == 'Egap(!*6:!21*),PV_cell(!13*:!*2)'
+    assert str(Egap) == 'Egap(!*6:!21*)'
+    assert str(PV_cell) == 'PV_cell(!13*:!*2)'
 
     reset()
     k2 = ((Egap > 0) & (Egap < 2)) | ((Egap > 5) | (Egap < 7))
-    assert str(k2) == 'Egap((0*,*2):(5*:*7))'
+    assert str(k2) == 'Egap((!*0,!2*):(!*5:!7*))'
     assert len(Egap.cache) == 0
     assert len(Egap.state) == 1
 
     reset()
     k3 = ((Egap > 0) & (Egap < 2)) | (Egap == 5)
-    assert str(k2) == 'Egap(5:(0*,*2))'
+    assert str(k2) == 'Egap(5:(!*0,!2*))'
+
+    reset()
+    k4 = ((Egap >= 6) | (Egap <= 21)) & (PV_cell <= 13)
+    assert str(k4) == 'Egap(6*:*21),PV_cell(*13)'
+
+    reset()
+    k5 = ((Egap >= 6) | (Egap <= 21)) & ((PV_cell <= 13) | (PV_cell >= 2))
+    assert str(k5) == 'Egap(6*:*21),PV_cell(*13:2*)'
+    assert str(Egap) == 'Egap(6*:*21)'
+    assert str(PV_cell) == 'PV_cell(*13:2*)'
+
+    reset()
+    k6 = ((Egap >= 0) & (Egap <= 2)) | ((Egap >= 5) | (Egap <= 7))
+    assert str(k6) == 'Egap((0*,*2):(5*:*7))'
+    assert len(Egap.cache) == 0
+    assert len(Egap.state) == 1
+
+    reset()
+    k7 = ((Egap >= 0) & (Egap <= 2)) | (Egap != 5)
+    assert str(k7) == 'Egap(!5:(0*,*2))'
     
 def test_corner():
     """Tests corner cases that aren't part of the previous tests.
