@@ -67,7 +67,7 @@ def test_operators():
     assert str(K.Egap) == 'Egap(6)'
     assert str(K.PV_cell) == 'PV_cell(!13)'
 
-    k4 = (K.data_source == 'aflow') | (K.species % 'Si')
+    k4 = (K.data_source == 'aflowlib') | (K.species % 'Si')
     assert str(k4) == "data_source('aflow'):species(*'Si'*)"
     assert str(K.data_source) == "data_source('aflow')"
     assert str(K.species) == "species(*'Si'*)"
