@@ -58,7 +58,8 @@ def _kpoints(value):
 
 def _ldau_TLUJ(value):
     parts = value.split(';')
-    if len(parts) != 4:
+    if len(parts) != 4:     # pragma: no cover
+        # This should not occur unless there is an error in the db
         return {'ldau_params': value}
     t, l, u, j = parts
     t = _number(t)
