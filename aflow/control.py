@@ -188,7 +188,7 @@ class Query(object):
             #AFLUX orders by the first element in the query. If we have an orderby
             #specified, then place it first.
             if self.order is not None:
-                items.append(str(self.order))
+                items.append(str(self.order.name))
 
             items.extend(list(map(str, self.selects)))
             items.extend(list(map(str, self.filters)))
