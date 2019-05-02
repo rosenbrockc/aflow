@@ -64,7 +64,7 @@ class Keyword(object):
         classes (set): of `str` keyword names that have been combined into the
           current keyword.
     """
-    name = None
+    name = ''
     ptype = None
     atype = None
     

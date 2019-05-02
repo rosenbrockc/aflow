@@ -183,15 +183,23 @@ class Query(object):
     def matchbook(self):
         """Constructs the matchbook portion of the query.
         """
-        if not self._final or self._matchbook is None:
+        if not self._final:
             items = []
             #AFLUX orders by the first element in the query. If we have an orderby
             #specified, then place it first.
             if self.order is not None:
-                if self.order.name in [x.name for x in self.excludes]:
+                excludes = [x.name for x in self.excludes]
+                selects = [v.name for v in self.selects]
+                if self.order.name in excludes:
                     items.append("${}".format(str(self.order.name)))
+                    idx = excludes.index(self.order.name)
+                    self.excludes.pop(idx)
                 else:
                     items.append(str(self.order.name))
+
+                if self.order.name in selects:
+                    idx = selects.index(self.order.name)
+                    self.selects.pop(idx)
 
             items.extend(list(map(str, self.selects)))
             items.extend(list(map(str, self.filters)))
@@ -303,10 +311,6 @@ class Query(object):
             self._N = None
             self.order = keyword
             self.reverse = reverse
-            selects = [v.name for v in self.selects]
-            if keyword.name in selects:
-                idx = selects.index(keyword.name)
-                self.selects.pop(idx)
         return self
     
     def exclude(self, *keywords):
