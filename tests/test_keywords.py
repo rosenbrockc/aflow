@@ -10,21 +10,23 @@ def test_reset():
     from aflow.keywords import reset
     load(globals())
     reset()
-    k = (Egap > 6) & (author == 'stefano')
+    k = (Egap > 6) & (species % 'Ba')
 
     assert len(Egap.cache) > 0
-    assert len(author.cache) > 0
+    assert len(species.cache) > 0
     assert len(k.state) > 0
 
     reset()
     assert len(Egap.cache) == 0
-    assert len(author.cache) == 0
+    assert len(species.cache) == 0
 
 def test_operators():
     """Tests operators and combinations of operators and the query
     strings that they produce relative to the AFLUX standard.
     """
     from aflow.keywords import reset
+    reset()
+
     k0 = (Egap > 6) & (PV_cell < 13)
     assert str(k0) == 'Egap(!*6),PV_cell(!13*)'
     assert str(Egap) == 'Egap(!*6)'
@@ -54,22 +56,24 @@ def test_operators():
     assert str(Egap) == 'Egap(6)'
     assert str(PV_cell) == 'PV_cell(!13)'
 
-    k4 = (author == 'stefano') | (species % 'Si')
-    assert str(k4) == "author('stefano'):species(*'Si'*)"
-    assert str(author) == "author('stefano')"
+    k4 = (data_source == 'aflow') | (species % 'Si')
+    assert str(k4) == "data_source('aflow'):species(*'Si'*)"
+    assert str(data_source) == "data_source('aflow')"
     assert str(species) == "species(*'Si'*)"
 
     reset()
 
-    k5 = (author > 'aflow') & (species < 'Ag')
-    assert str(k5) == "author('aflow'*),species(*'Ag')"
-    assert str(author) == "author('aflow'*)"
+    k5 = (data_source > 'aflow') & (species < 'Ag')
+    assert str(k5) == "data_source('aflow'*),species(*'Ag')"
+    assert str(data_source) == "data_source('aflow'*)"
     assert str(species) == "species(*'Ag')"
 
 def test_invert():
     """Tests inversion (i.e., negation) of an operator.
     """
     from aflow.keywords import reset
+    reset()
+
     k0 = (Egap > 6) & (PV_cell < 13)
     kn0 = ~k0
     assert str(kn0) == 'Egap(*6),PV_cell(13*)'
