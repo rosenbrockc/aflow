@@ -5,3 +5,4 @@ def test_corner():
     from aflow.caster import cast
     assert cast("numbers", "spinD", None) is None
     assert cast("numbers", "spinD", "garbage") is None
+    assert cast("numbers", "ldau_TLUJ", "garbage") is {'ldau_params': 'garbage'}
