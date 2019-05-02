@@ -69,7 +69,7 @@ def test_operators():
 
     k4 = (K.data_source == 'aflowlib') | (K.species % 'Si')
     assert str(k4) == "data_source('aflow'):species(*'Si'*)"
-    assert str(K.data_source) == "data_source('aflow')"
+    assert str(K.data_source) == "data_source('aflowlib')"
     assert str(K.species) == "species(*'Si'*)"
 
     reset()
