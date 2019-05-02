@@ -31,7 +31,12 @@ def _kpoints(value):
     relaxation = np.array(list(map(_number, parts[0].split(','))))
     if len(parts) == 1:
         # Some entries have only relaxation kpoint information
-        return {"relaxation": relaxation}
+        return {
+            "relaxation": relaxation,
+            "static": None,
+            "points": None,
+            "nsamples": None
+        }
     static = np.array(list(map(_number, parts[1].split(','))))
     if len(parts) == 3: # pragma: no cover
         #The web page (possibly outdated) includes an example where
@@ -74,14 +79,17 @@ def _stoich(value):
 docstrings = {
     "kpoints": """dict: with keys ['relaxation', 'static', 'points', 'nsamples']
 describing the cells for the relaxation and static calculations, the
-k-space symmetry points of the structure and the number of samples."""
+k-space symmetry points of the structure and the number of samples.""",
+    "ldau_TLUJ": """dict: with keys ['LDAUTYPE', 'LDAUL', 'LDAUU', 'LDAUJ']
+describing the parameters of the DFT+U calculations, based on a corrective functional 
+inspired by the Hubbard model."""
 }
 """dict: key-value pairs for custom docstrings describing the return
 value of keywords with complex structure.
 """
 
 exceptions = ["forces", "kpoints", "positions_cartesian",
-              "positions_fractional", "spind", "stoich"]
+              "positions_fractional", "spind", "stoich", "ldau_TLUJ"]
 """list: of AFLOW keywords for which the casting has to be handled in a special
 way.
 """

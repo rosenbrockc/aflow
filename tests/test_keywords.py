@@ -19,6 +19,18 @@ def test_reset():
     assert len(K.Egap.cache) == 0
     assert len(K.species.cache) == 0
 
+def test_load():
+    """Tests keyword loading into dict
+    """
+    from aflow.keywords import load
+    kws_from_module = K.__dict__
+    loaded_kws = dict()
+    load(loaded_kws)
+
+    for kw, obj in loaded_kws.items():
+        assert kw in kws_from_module
+        assert obj is kws_from_module[kw]
+
 def test_operators():
     """Tests operators and combinations of operators and the query
     strings that they produce relative to the AFLUX standard.

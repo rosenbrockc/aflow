@@ -48,3 +48,10 @@ def test_ordering():
         ).select(kw.agl_thermal_conductivity_300K
         ).filter(kw.Egap > 6).orderby(kw.agl_thermal_conductivity_300K, True)
     assert len(result[80].aurl) > 0
+
+    orderby_exclude_result = aflow.search(batch_size=20
+        ).select(kw.agl_thermal_conductivity_300K
+        ).filter(kw.Egap > 6).orderby(kw.auid).exclude(kw.auid)
+
+    assert orderby_exclude_result.matchbook().startswith('$auid')
+
