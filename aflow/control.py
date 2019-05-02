@@ -45,9 +45,8 @@ class Query(object):
         step (int): step size over entries.
     """
     def __init__(self, catalog=None, batch_size=100, step=1):
-        from aflow.keywords import keywords
         self.filters = []
-        self.selects = []#keywords]
+        self.selects = []
         self.excludes = []
         self.order = None
         self.catalog = catalog if isinstance(catalog, (list, tuple, type(None))) else [catalog]
