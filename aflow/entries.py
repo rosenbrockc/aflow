@@ -2056,25 +2056,7 @@ class Entry(object):
             `spin_cell=2.16419`
         """
         return self._lazy_load("spin_cell")
-    
-    @property
-    def sponsor(self):
-        """sponsor (`optional`). Units: ``.
-        
-        .. warning:: This keyword is still listed as development level. Use it
-          knowing that it is subject to change or removal.
-        
 
-        Returns:
-            list: Returns information about funding agencies and other sponsors for the data.
-        
-        Examples:
-            You can expect the *content* of the result to be something like:
-
-            `sponsor=DOD_N000141310635,NIST_70NANB12H163`
-        """
-        return self._lazy_load("sponsor")
-    
     @property
     def stoich(self):
         """unit cell stoichiometry (`optional`). Units: ``.
