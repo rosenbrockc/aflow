@@ -303,8 +303,10 @@ class Query(object):
             self._N = None
             self.order = keyword
             self.reverse = reverse
-            if keyword in self.selects:
-                self.selects.remove(keyword)
+            selects = [v.name for v in self.selects]
+            if keyword.name in selects:
+                idx = selects.index(keyword.name)
+                self.selects.pop(idx)
         return self
     
     def exclude(self, *keywords):
