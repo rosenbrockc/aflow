@@ -12,8 +12,6 @@ def _val_from_str(attr, value):
     if hasattr(kw, clsname):
         cls = getattr(kw, clsname)
         atype = getattr(cls, "atype")
-        if attr == "kpoints":
-            print(atype, attr, value)
         return cast(atype, attr, value)
     else:
         return value
@@ -125,7 +123,6 @@ class Entry(object):
         """
         self._files = None
         
-
     def __str__(self):
         aurl = self.attributes["aurl"].replace(".edu:", ".edu/")
         return "http://" + aurl
@@ -439,24 +436,6 @@ class Entry(object):
         return self._lazy_load("Pulay_stress")
     
     @property
-    def Pullay_stress(self):
-        """Pulay Stress (`mandatory`). Units: `kbar`.
-        
-        .. warning:: This keyword is still listed as development level. Use it
-          knowing that it is subject to change or removal.
-        
-
-        Returns:
-            float: Returns a metric of the basis set inconsistency for the calculation.
-        
-        Examples:
-            You can expect the *content* of the result to be something like:
-
-            `Pullay_stress=10.0`
-        """
-        return self._lazy_load("Pullay_stress")
-    
-    @property
     def ael_bulk_modulus_reuss(self):
         """AEL Reuss bulk modulus (`optional`). Units: `GPa`.
         
@@ -520,8 +499,8 @@ class Entry(object):
         return self._lazy_load("ael_bulk_modulus_vrh")
     
     @property
-    def ael_elastic_anistropy(self):
-        """AEL elastic anistropy (`optional`). Units: ``.
+    def ael_elastic_anisotropy(self):
+        """AEL elastic anisotropy (`optional`). Units: ``.
         
         
         .. note:: The following verifications are available for this
@@ -531,14 +510,14 @@ class Entry(object):
           - :meth:`kpoints`
 
         Returns:
-            float: Returns the elastic anistropy as calculated with AEL.
+            float: Returns the elastic anisotropy as calculated with AEL.
         
         Examples:
             You can expect the *content* of the result to be something like:
 
-            `ael_elastic_anistropy=0.0008165`
+            `ael_elastic_anisotropy=0.0008165`
         """
-        return self._lazy_load("ael_elastic_anistropy")
+        return self._lazy_load("ael_elastic_anisotropy")
     
     @property
     def ael_poisson_ratio(self):
@@ -657,40 +636,6 @@ class Entry(object):
             `aflowlib_date=20140204_13:10:39_GMT-5`
         """
         return self._lazy_load("aflowlib_date")
-    
-    @property
-    def aflowlib_entries(self):
-        """aflowlib entries (`conditional`). Units: ``.
-        
-        
-        
-
-        Returns:
-            list: For projects and set-layer entries, aflowlib_entries lists the available sub-entries which are associated with the $aurl of the subdirectories.  By parsing $aurl/?aflowlib_entries (containing $aurl/aflowlib_entries_number entries) the user finds further locations to interrogate.
-        
-        Examples:
-            You can expect the *content* of the result to be something like:
-
-            `aflowlib_entries=AgAl,AgAs,AgAu,AgB_h,AgBa_sv,AgBe_sv,AgBi_d,AgBr,AgCa_sv,...`
-        """
-        return self._lazy_load("aflowlib_entries")
-    
-    @property
-    def aflowlib_entries_number(self):
-        """aflowlib entry count (`conditional`). Units: ``.
-        
-        
-        
-
-        Returns:
-            float: For projects and set-layer entries, aflowlib_entrieslists the available sub-entries which are associated with the $aurl of the subdirectories.  By parsing $aurl/?aflowlib_entries (containing $aurl/aflowlib_entries_number entries) the user finds further locations to interrogate.
-        
-        Examples:
-            You can expect the *content* of the result to be something like:
-
-            `aflowlib_entries_number=654`
-        """
-        return self._lazy_load("aflowlib_entries_number")
     
     @property
     def aflowlib_version(self):
@@ -933,24 +878,6 @@ class Entry(object):
         return self._lazy_load("aurl")
     
     @property
-    def author(self):
-        """author (`optional`). Units: ``.
-        
-        .. warning:: This keyword is still listed as development level. Use it
-          knowing that it is subject to change or removal.
-        
-
-        Returns:
-            list: Returns the name (not necessarily an individual) and affiliation associated with authorship of the data.
-        
-        Examples:
-            You can expect the *content* of the result to be something like:
-
-            `author=Marco_Buongiorno_Nardelli,Ohad_Levy,Jesus_Carrete`
-        """
-        return self._lazy_load("author")
-    
-    @property
     def bader_atomic_volumes(self):
         """atomic volume per atom (`optional`). Units: `&Aring;<sup>3</sup>`.
         
@@ -1124,24 +1051,6 @@ class Entry(object):
         return self._lazy_load("compound")
     
     @property
-    def corresponding(self):
-        """coresponding (`optional`). Units: ``.
-        
-        .. warning:: This keyword is still listed as development level. Use it
-          knowing that it is subject to change or removal.
-        
-
-        Returns:
-            list: Returns the name (not necessarily an individual) and affiliation associated with the data origin concerning correspondence about data.
-        
-        Examples:
-            You can expect the *content* of the result to be something like:
-
-            `corresponding=M_Buongiorno_Nardelli_mbn@unt.edu`
-        """
-        return self._lazy_load("corresponding")
-    
-    @property
     def data_api(self):
         """REST API version (`mandatory`). Units: ``.
         
@@ -1157,24 +1066,7 @@ class Entry(object):
             `data_api=aapi1.0`
         """
         return self._lazy_load("data_api")
-    
-    @property
-    def data_language(self):
-        """data language (`optional`). Units: ``.
-        
-        
-        
 
-        Returns:
-            list: Gives the language of the data in AFLOWLIB.
-        
-        Examples:
-            You can expect the *content* of the result to be something like:
-
-            `data_language=aflowlib`
-        """
-        return self._lazy_load("data_language")
-    
     @property
     def data_source(self):
         """data source (`optional`). Units: ``.
@@ -1872,24 +1764,6 @@ class Entry(object):
         return self._lazy_load("pressure")
     
     @property
-    def pressure_final(self):
-        """resulting pressure (`mandatory`). Units: `kbar`.
-        
-        .. warning:: This keyword is still listed as development level. Use it
-          knowing that it is subject to change or removal.
-        
-
-        Returns:
-            float: Returns the external pressure achieved by the simulation.
-        
-        Examples:
-            You can expect the *content* of the result to be something like:
-
-            `pressure_final=10.0`
-        """
-        return self._lazy_load("pressure_final")
-    
-    @property
     def pressure_residual(self):
         """residual pressure (`mandatory`). Units: `kbar`.
         
@@ -2182,25 +2056,7 @@ class Entry(object):
             `spin_cell=2.16419`
         """
         return self._lazy_load("spin_cell")
-    
-    @property
-    def sponsor(self):
-        """sponsor (`optional`). Units: ``.
-        
-        .. warning:: This keyword is still listed as development level. Use it
-          knowing that it is subject to change or removal.
-        
 
-        Returns:
-            list: Returns information about funding agencies and other sponsors for the data.
-        
-        Examples:
-            You can expect the *content* of the result to be something like:
-
-            `sponsor=DOD_N000141310635,NIST_70NANB12H163`
-        """
-        return self._lazy_load("sponsor")
-    
     @property
     def stoich(self):
         """unit cell stoichiometry (`optional`). Units: ``.

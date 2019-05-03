@@ -45,9 +45,8 @@ class Query(object):
         step (int): step size over entries.
     """
     def __init__(self, catalog=None, batch_size=100, step=1):
-        from aflow.keywords import keywords
         self.filters = []
-        self.selects = []#keywords]
+        self.selects = []
         self.excludes = []
         self.order = None
         self.catalog = catalog if isinstance(catalog, (list, tuple, type(None))) else [catalog]
@@ -93,7 +92,7 @@ class Query(object):
     @property
     def N(self):
         if self._N is None:
-            response = self._request(self.n, self.k)
+            self._request(self.n, self.k)
         return self._N
 
     @property
@@ -154,6 +153,11 @@ class Query(object):
             msg.err("{}\n\n{}".format(url, rawresp))
             return
 
+        if not response:
+            self._N = 0
+            msg.err("Empty response from API. "
+                    "Check your query filters.\nURI: {}".format(url))
+            return
         #If this is the first request, then save the number of results in the
         #query.
         if len(self.responses) == 0:
@@ -184,12 +188,23 @@ class Query(object):
     def matchbook(self):
         """Constructs the matchbook portion of the query.
         """
-        if not self._final or self._matchbook is None:
+        if not self._final:
             items = []
             #AFLUX orders by the first element in the query. If we have an orderby
             #specified, then place it first.
             if self.order is not None:
-                items.append(str(self.order))
+                excludes = [x.name for x in self.excludes]
+                selects = [v.name for v in self.selects]
+                if self.order.name in excludes:
+                    items.append("${}".format(str(self.order.name)))
+                    idx = excludes.index(self.order.name)
+                    self.excludes.pop(idx)
+                else:
+                    items.append(str(self.order.name))
+
+                if self.order.name in selects:
+                    idx = selects.index(self.order.name)
+                    self.selects.pop(idx)
 
             items.extend(list(map(str, self.selects)))
             items.extend(list(map(str, self.filters)))
@@ -233,7 +248,7 @@ class Query(object):
         if self.reverse:
             n *= -1
 
-        if n not in self.responses and self._iter < self.max_N:
+        if self._iter < self.max_N and n not in self.responses:
             self._n = abs(n)
             self._request(self.n, self.k)
 
@@ -301,8 +316,6 @@ class Query(object):
             self._N = None
             self.order = keyword
             self.reverse = reverse
-            if keyword in self.selects:
-                self.selects.remove(keyword)
         return self
     
     def exclude(self, *keywords):

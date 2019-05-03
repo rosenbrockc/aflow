@@ -18,8 +18,7 @@ def _number(value):
 
 def _numbers(value):
     svals = list(value.split(','))
-    dtype = type(_number(svals[0]))
-    vals = list(map(dtype, svals))
+    vals = list(map(_number, svals))
     return np.array(vals)
 
 def _forces(value):
@@ -30,6 +29,14 @@ def _forces(value):
 def _kpoints(value):
     parts = value.split(';')
     relaxation = np.array(list(map(_number, parts[0].split(','))))
+    if len(parts) == 1:
+        # Some entries have only relaxation kpoint information
+        return {
+            "relaxation": relaxation,
+            "static": None,
+            "points": None,
+            "nsamples": None
+        }
     static = np.array(list(map(_number, parts[1].split(','))))
     if len(parts) == 3: # pragma: no cover
         #The web page (possibly outdated) includes an example where
@@ -41,13 +48,31 @@ def _kpoints(value):
     else:
         points = parts[-2].split('-')
         nsamples = int(parts[-1])
-        
+
     return {
         "relaxation": relaxation,
         "static": static,
         "points": points,
         "nsamples": nsamples
-        }
+    }
+
+def _ldau_TLUJ(value):
+    parts = value.split(';')
+    if len(parts) != 4:
+        # This should not occur unless there is an error in the db
+        return {'ldau_params': value}
+    t, l, u, j = parts
+    t = _number(t)
+    l = _numbers(l)
+    u = _numbers(u)
+    j = _numbers(j)
+
+    return {
+        "LDAUTYPE": t,
+        "LDAUL": l,
+        "LDAUU": u,
+        "LDAUJ": j
+    }
 
 def _stoich(value):
     return list(map(_number, value.strip().split()))
@@ -55,14 +80,17 @@ def _stoich(value):
 docstrings = {
     "kpoints": """dict: with keys ['relaxation', 'static', 'points', 'nsamples']
 describing the cells for the relaxation and static calculations, the
-k-space symmetry points of the structure and the number of samples."""
+k-space symmetry points of the structure and the number of samples.""",
+    "ldau_TLUJ": """dict: with keys ['LDAUTYPE', 'LDAUL', 'LDAUU', 'LDAUJ']
+describing the parameters of the DFT+U calculations, based on a corrective functional 
+inspired by the Hubbard model."""
 }
 """dict: key-value pairs for custom docstrings describing the return
 value of keywords with complex structure.
 """
 
 exceptions = ["forces", "kpoints", "positions_cartesian",
-              "positions_fractional", "spind", "stoich"]
+              "positions_fractional", "spind", "stoich", "ldau_TLUJ"]
 """list: of AFLOW keywords for which the casting has to be handled in a special
 way.
 """
@@ -86,6 +114,7 @@ def ptype(atype, keyword):
         "positions_fractional": "numpy.ndarray",
         "spind": "list",
         "stoich": "list",
+        "ldau_TLUJ": "dict",
         "None": None,
         None: None
     }
@@ -122,6 +151,7 @@ def cast(atype, keyword, value):
         "positions_fractional": _forces,
         "spind": _numbers,
         "stoich": _stoich,
+        "ldau_TLUJ": _ldau_TLUJ,
         "None": lambda v: v,
         None: lambda v: v,
     }
@@ -133,4 +163,4 @@ def cast(atype, keyword, value):
             return castmap[keyword](value)
     except:
         msg.err("Cannot cast {}; unknown format.".format(value))
-    
+

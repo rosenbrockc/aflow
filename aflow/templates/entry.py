@@ -12,8 +12,6 @@ def _val_from_str(attr, value):
     if hasattr(kw, clsname):
         cls = getattr(kw, clsname)
         atype = getattr(cls, "atype")
-        if attr == "kpoints":
-            print(atype, attr, value)
         return cast(atype, attr, value)
     else:
         return value

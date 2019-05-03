@@ -64,7 +64,7 @@ class Keyword(object):
         classes (set): of `str` keyword names that have been combined into the
           current keyword.
     """
-    name = None
+    name = ''
     ptype = None
     atype = None
     
@@ -89,18 +89,28 @@ class Keyword(object):
         else:
             return s
         
+    def __le__(self, other):
+        assert not isinstance(other, string_types)
+        self.cache.append("*{0}".format(other))
+        return self
+            
+    def __ge__(self, other):
+        assert not isinstance(other, string_types)
+        self.cache.append("{0}*".format(other))
+        return self
+
     def __lt__(self, other):
         if isinstance(other, string_types):
             self.cache.append("*'{0}'".format(other))
         else:
-            self.cache.append("*{0}".format(other))
+            return ~(self >= other)
         return self
-            
+
     def __gt__(self, other):
         if isinstance(other, string_types):
             self.cache.append("'{0}'*".format(other))
         else:
-            self.cache.append("{0}*".format(other))
+            return ~(self <= other)
         return self
 
     def __mod__(self, other):
@@ -114,6 +124,9 @@ class Keyword(object):
         else:
             self.cache.append("{0}".format(other))
         return self
+
+    def __ne__(self, other):
+        return ~(self == other)
 
     def _generic_combine(self, other, token):
         if other is self:
@@ -166,24 +179,20 @@ class Keyword(object):
         return self._generic_combine(other, ':')
 
     def __invert__(self):
-        assert len(self.state) == 1 or len(self.cache) == 1
-        #The two uncovered cases below are coded for completeness, but we don't
-        #have any tests to trigger them; i.e., they don't come up in normal
-        #operations.
-        if len(self.state) == 1:
-            if '!' in self.state[0]:
-                self.state[0] = self.state[0].replace('!', '')
-            elif '(' in self.state[0]:
-                self.state[0] = self.state[0].replace('(', "(!")
-            else:# pragma: no cover
-                self.state[0] = '!' + self.state[0]
-        elif len(self.cache) == 1:
-            if '!' in self.cache[0]:
-                self.cache[0] = self.cache[0].replace('!', '')
-            elif '(' in self.cache[0]:# pragma: no cover
-                self.cache[0] = self.cache[0].replace('(', "(!")
-            else:
-                self.cache[0] = '!' + self.cache[0]
+        target = None
+        if len(self.cache) > 0:
+            target = self.cache
+        elif len(self.state) > 0:
+            target = self.state
+
+        assert target is not None
+
+        if '(' in target[-1]:
+            target[-1] = target[-1].replace('(', "(!")
+        else:
+            target[-1] = '!' + target[-1]
+
+        target[-1] = target[-1].replace("!!", "")
         return self    
     
     
@@ -338,22 +347,6 @@ class _Pulay_stress(Keyword):
 
 Pulay_stress = _Pulay_stress()
     
-class _Pullay_stress(Keyword):
-    """Pulay Stress (`mandatory`). Units: `kbar`.
-    
-    .. warning:: This keyword is still listed as development level. Use it
-      knowing that it is subject to change or removal.
-
-    Returns:
-        float: Returns a metric of the basis set inconsistency for the calculation.
-        
-    """
-    name = "Pullay_stress"
-    ptype = float
-    atype = "number"
-
-Pullay_stress = _Pullay_stress()
-    
 class _ael_bulk_modulus_reuss(Keyword):
     """AEL Reuss bulk modulus (`optional`). Units: `GPa`.
     
@@ -399,20 +392,20 @@ class _ael_bulk_modulus_vrh(Keyword):
 
 ael_bulk_modulus_vrh = _ael_bulk_modulus_vrh()
     
-class _ael_elastic_anistropy(Keyword):
-    """AEL elastic anistropy (`optional`). Units: ``.
+class _ael_elastic_anisotropy(Keyword):
+    """AEL elastic anisotropy (`optional`). Units: ``.
     
     
 
     Returns:
-        float: Returns the elastic anistropy as calculated with AEL.
+        float: Returns the elastic anisotropy as calculated with AEL.
         
     """
-    name = "ael_elastic_anistropy"
+    name = "ael_elastic_anisotropy"
     ptype = float
     atype = "number"
 
-ael_elastic_anistropy = _ael_elastic_anistropy()
+ael_elastic_anisotropy = _ael_elastic_anisotropy()
     
 class _ael_poisson_ratio(Keyword):
     """AEL Poisson ratio (`optional`). Units: ``.
@@ -503,36 +496,6 @@ class _aflowlib_date(Keyword):
     atype = "string"
 
 aflowlib_date = _aflowlib_date()
-    
-class _aflowlib_entries(Keyword):
-    """aflowlib entries (`conditional`). Units: ``.
-    
-    
-
-    Returns:
-        list: For projects and set-layer entries, aflowlib_entries lists the available sub-entries which are associated with the $aurl of the subdirectories.  By parsing $aurl/?aflowlib_entries (containing $aurl/aflowlib_entries_number entries) the user finds further locations to interrogate.
-        
-    """
-    name = "aflowlib_entries"
-    ptype = list
-    atype = "strings"
-
-aflowlib_entries = _aflowlib_entries()
-    
-class _aflowlib_entries_number(Keyword):
-    """aflowlib entry count (`conditional`). Units: ``.
-    
-    
-
-    Returns:
-        float: For projects and set-layer entries, aflowlib_entrieslists the available sub-entries which are associated with the $aurl of the subdirectories.  By parsing $aurl/?aflowlib_entries (containing $aurl/aflowlib_entries_number entries) the user finds further locations to interrogate.
-        
-    """
-    name = "aflowlib_entries_number"
-    ptype = float
-    atype = "number"
-
-aflowlib_entries_number = _aflowlib_entries_number()
     
 class _aflowlib_version(Keyword):
     """aflowlib version (`optional`). Units: ``.
@@ -714,22 +677,6 @@ class _aurl(Keyword):
 
 aurl = _aurl()
     
-class _author(Keyword):
-    """author (`optional`). Units: ``.
-    
-    .. warning:: This keyword is still listed as development level. Use it
-      knowing that it is subject to change or removal.
-
-    Returns:
-        list: Returns the name (not necessarily an individual) and affiliation associated with authorship of the data.
-        
-    """
-    name = "author"
-    ptype = list
-    atype = "strings"
-
-author = _author()
-    
 class _bader_atomic_volumes(Keyword):
     """atomic volume per atom (`optional`). Units: `&Aring;<sup>3</sup>`.
     
@@ -804,22 +751,7 @@ class _calculation_time(Keyword):
     atype = "number"
 
 calculation_time = _calculation_time()
-    
-class _catalog(Keyword):
-    """catalog (`optional`). Units: ``.
-    
-    
 
-    Returns:
-        str: Returns the context set for the calculation.
-        
-    """
-    name = "catalog"
-    ptype = str
-    atype = "string"
-
-catalog = _catalog()
-    
 class _code(Keyword):
     """ab initio code (`optional`). Units: ``.
     
@@ -865,22 +797,6 @@ class _compound(Keyword):
 
 compound = _compound()
     
-class _corresponding(Keyword):
-    """coresponding (`optional`). Units: ``.
-    
-    .. warning:: This keyword is still listed as development level. Use it
-      knowing that it is subject to change or removal.
-
-    Returns:
-        list: Returns the name (not necessarily an individual) and affiliation associated with the data origin concerning correspondence about data.
-        
-    """
-    name = "corresponding"
-    ptype = list
-    atype = "strings"
-
-corresponding = _corresponding()
-    
 class _data_api(Keyword):
     """REST API version (`mandatory`). Units: ``.
     
@@ -895,21 +811,6 @@ class _data_api(Keyword):
     atype = "string"
 
 data_api = _data_api()
-    
-class _data_language(Keyword):
-    """data language (`optional`). Units: ``.
-    
-    
-
-    Returns:
-        list: Gives the language of the data in AFLOWLIB.
-        
-    """
-    name = "data_language"
-    ptype = list
-    atype = "strings"
-
-data_language = _data_language()
     
 class _data_source(Keyword):
     """data source (`optional`). Units: ``.
@@ -1184,22 +1085,6 @@ class _geometry(Keyword):
 
 geometry = _geometry()
     
-class _keywords(Keyword):
-    """Title (`mandatory`). Units: ``.
-    
-    .. warning:: This keyword is still listed as development level. Use it
-      knowing that it is subject to change or removal.
-
-    Returns:
-        list: This includes the list of keywords available in the entry, separated by commas.
-        
-    """
-    name = "keywords"
-    ptype = list
-    atype = "strings"
-
-keywords = _keywords()
-    
 class _kpoints(Keyword):
     """K-point mesh (`optional`). Units: ``.
     
@@ -1287,7 +1172,7 @@ class _ldau_TLUJ(Keyword):
         
     """
     name = "ldau_TLUJ"
-    ptype = list
+    ptype = dict
     atype = "numbers"
 
 ldau_TLUJ = _ldau_TLUJ()
@@ -1458,22 +1343,6 @@ class _pressure(Keyword):
     atype = "number"
 
 pressure = _pressure()
-    
-class _pressure_final(Keyword):
-    """resulting pressure (`mandatory`). Units: `kbar`.
-    
-    .. warning:: This keyword is still listed as development level. Use it
-      knowing that it is subject to change or removal.
-
-    Returns:
-        float: Returns the external pressure achieved by the simulation.
-        
-    """
-    name = "pressure_final"
-    ptype = float
-    atype = "number"
-
-pressure_final = _pressure_final()
     
 class _pressure_residual(Keyword):
     """residual pressure (`mandatory`). Units: `kbar`.
@@ -1700,22 +1569,6 @@ class _spin_cell(Keyword):
     atype = "number"
 
 spin_cell = _spin_cell()
-    
-class _sponsor(Keyword):
-    """sponsor (`optional`). Units: ``.
-    
-    .. warning:: This keyword is still listed as development level. Use it
-      knowing that it is subject to change or removal.
-
-    Returns:
-        list: Returns information about funding agencies and other sponsors for the data.
-        
-    """
-    name = "sponsor"
-    ptype = list
-    atype = "strings"
-
-sponsor = _sponsor()
     
 class _stoich(Keyword):
     """unit cell stoichiometry (`optional`). Units: ``.
