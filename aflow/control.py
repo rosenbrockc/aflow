@@ -155,7 +155,7 @@ class Query(object):
 
         if not response:
             self._N = 0
-            msg.err("Empty response from URI. "
+            msg.err("Empty response from API. "
                     "Check your query filters.\nURI: {}".format(url))
             return
         #If this is the first request, then save the number of results in the
