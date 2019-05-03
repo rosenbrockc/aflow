@@ -55,3 +55,10 @@ def test_ordering():
 
     assert orderby_exclude_result.matchbook().startswith('$auid')
 
+def test_empty_query_result():
+    import aflow
+    import aflow.keywords as kw
+    # Check for auids that end with "aflow", which none do
+    result = aflow.search(catalog='icsd', batch_size=20
+                          ).filter(kw.auid < "aflow")
+    assert result.N == 0

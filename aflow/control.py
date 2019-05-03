@@ -92,7 +92,7 @@ class Query(object):
     @property
     def N(self):
         if self._N is None:
-            response = self._request(self.n, self.k)
+            self._request(self.n, self.k)
         return self._N
 
     @property
@@ -154,6 +154,7 @@ class Query(object):
             return
 
         if not response:
+            self._N = 0
             msg.err("Empty response from URI. "
                     "Check your query filters.\nURI: {}".format(url))
             return
