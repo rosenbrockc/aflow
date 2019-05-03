@@ -248,7 +248,7 @@ class Query(object):
         if self.reverse:
             n *= -1
 
-        if n not in self.responses and self._iter < self.max_N:
+        if self._iter < self.max_N and n not in self.responses:
             self._n = abs(n)
             self._request(self.n, self.k)
 
