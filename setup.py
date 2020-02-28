@@ -28,7 +28,6 @@ setup(name='aflow',
       setup_requires=['pytest-runner',],
       tests_require=['pytest', 'python-coveralls'],
       install_requires=[
-          "argparse",
           "termcolor",
           "numpy",
           "six",
