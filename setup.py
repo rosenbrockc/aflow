@@ -33,7 +33,7 @@ setup(name='aflow',
           "numpy",
           "six",
           "jinja2",
-          "bs4",
+          "beautifulsoup4",
           "ase"
       ],
       packages=['aflow'],
