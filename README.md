@@ -30,6 +30,12 @@ Install `aflow` from the python package index:
 pip install aflow
 ```
 
+Or alternatively install `aflow` from conda using:
+
+```
+conda install -c conda-forge aflow
+```
+
 Open an ipython notebook or terminal and execute the query from the paper:
 
 ```python
