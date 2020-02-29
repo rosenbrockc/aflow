@@ -52,4 +52,7 @@ for entry in result:
 
 `aflow` supports lazy evaluation. This means that if you didn't ask for a particular property during the initial query, you can just ask for it later and the request will happen transparently in the background.
 
+# Python 2 Support
 
+Although the package was originally designed to be compatible with both python 2 and python 3, python 2 has 
+reached the end of its life. As such, we don't guarantee anymore that it will work.
