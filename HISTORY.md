@@ -1,5 +1,10 @@
 # `aflow` Revision History
 
+## Revision 0.0.11
+
+- Minor changes to requirements/dependencies.
+- Updated `README.md` to show how to install from `conda`.
+
 ## Revision 0.0.9
 
 - Fixed a bug that prevented "bz2" and "png" files from being downloaded.
