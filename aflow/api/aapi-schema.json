@@ -1,0 +1,3252 @@
+{
+  "AAPI_valid": [
+    "Not Validated, see AAPI_schema.php for verification logic: set to false to validate schema, set to null for verbose validation.",
+    false
+  ],
+  "AAPI_schema": {
+    "__schema^2__": {
+      "__comment__": [
+        "The zeroth element of any object or array in this document is meta.",
+        "If last element is null, element parent considered optional.",
+        "If last element is '.', element value can be anything.",
+        "If last element is '', element value can be nothing.",
+        "This document is the AAPI schema, it is self validating and order sensitive.",
+        "."
+      ],
+      "delimiter": [
+        "An ordered set of single character seperators for distinguishing plural type property values",
+        null
+      ],
+      "description": [
+        "intended for popup help boxes, describes the current property: freeform text",
+        "."
+      ],
+      "example": [
+        "Actual result that may occur in API or search context, developmental: structured text",
+        "."
+      ],
+      "expression": [
+        "intended for materials reports, developmental. Must be one of",
+        "declarative",
+        "directive",
+        "derivative"
+      ],
+      "format": [
+        "intended for printf style formating of property value: corresponds to the type attribute",
+        "."
+      ],
+      "function": [
+        "defines the post-processing function that is used by AFLOW. Must be one of",
+        "app",
+        "compound",
+        "crystallography",
+        "icsd",
+        "image",
+        "lattice",
+        "lattice_reciprocal",
+        "ldau",
+        "link",
+        "spacegroup",
+        "species_resolved",
+        "atom_resolved",
+        null
+      ],
+      "href": [
+        "target of the links or source of the images",
+        null
+      ],
+      "inclusion": [
+        "intended for search filters and materials reports. Optional entries are only shown when not null, mandatory entries are always shown. Must be one of",
+        "mandatory",
+        "conditional",
+        "optional",
+        "forbidden"
+      ],
+      "linktext": [
+        "Text of the link or alt text for the image.",
+        null
+      ],
+      "search": [
+        [
+          "intended for search and stat, Must be one of",
+          "equals -> exact match input (select or freeform) to value",
+          "contains -> substring match (select or freeform) in value",
+          "range ->   bounded match (select or freeform) in value"
+        ],
+        "equals",
+        "contains",
+        "range",
+        null
+      ],
+      "status": [
+        "Development stage of property. Must be one of",
+        "production",
+        "development",
+        "deprecated",
+        "reserved"
+      ],
+      "syntax": [
+        "Actual setting that may be used in API or search context, developmental: structured text",
+        "."
+      ],
+      "title": [
+        "intended for labeling property in document rendering: freeform text (HTML?)",
+        "."
+      ],
+      "type": [
+        "intended for DB and document type handling: must be one of",
+        "string",
+        "strings",
+        "number",
+        "numbers"
+      ],
+      "units": [
+        "units for search filter number in HTML: optional",
+        null
+      ],
+      "verification": [
+        "Optional list of property references designed to certify that the result is contextually relevant.",
+        null
+      ]
+    },
+    "ael_bulk_modulus_reuss": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the bulk modulus as calculated using the Reuss method with AEL.",
+      "title": "AEL Reuss bulk modulus",
+      "format": "%g",
+      "type": "number",
+      "units": "GPa",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "ael_bulk_modulus_reuss=105.315",
+      "status": "production",
+      "syntax": "$aurl/?ael_bulk_modulus_reuss"
+    },
+    "ael_bulk_modulus_voigt": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the bulk modulus as calculated using the Voigt method with AEL.",
+      "title": "AEL Voigt bulk modulus",
+      "format": "%g",
+      "type": "number",
+      "units": "GPa",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "ael_bulk_modulus_voiht=105.315",
+      "status": "production",
+      "syntax": "$aurl/?ael_bulk_modulus_voigt"
+    },
+    "ael_bulk_modulus_vrh": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the bulk modulus as calculated using the Voigt-Reuss-Hill average with AEL.",
+      "title": "AEL VRH bulk modulus",
+      "format": "%g",
+      "type": "number",
+      "units": "GPa",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "ael_bulk_modulus_vrh=105.315",
+      "status": "production",
+      "syntax": "$aurl/?ael_bulk_modulus_vrh"
+    },
+    "ael_compliance_tensor": {
+      "__comment__": [
+      ],
+      "description": "AEL compliance tensor",
+      "title": "Compliance tensor",
+      "format": "%g",
+      "function": "matrix",
+      "type": "numbers",
+      "units": "",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "status": "production",
+      "syntax": "$aurl/?ael_compliance_tensor"
+    },
+    "ael_compliance_tensor_file": {
+      "__comment__": [
+        ""
+      ],
+      "description": "AEL compliance tensor file",
+      "title": "AEL Compliance Constants (compliance tensor)",
+      "href": "$aurl/AEL_Compliance_tensor.out",
+      "linktext": "AEL_Compliance_tensor.out",
+      "format": "%s",
+      "function": "link",
+      "type": "string",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "optional",
+      "status": "production"
+    },
+    "ael_elastic_anisotropy": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the elastic anisotropy as calculated with AEL.",
+      "title": "AEL elastic anisotropy",
+      "format": "%g",
+      "type": "number",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "ael_elastic_anisotropy=0.0008165",
+      "status": "production",
+      "syntax": "$aurl/?ael_elastic_anisotropy"
+    },
+    "ael_output": {
+      "__comment__": [
+        ""
+      ],
+      "description": "AEL output file",
+      "title": "AEL Output",
+      "href": "$aurl/aflow.ael.out",
+      "linktext": "aflow.ael.out",
+      "format": "%s",
+      "function": "link",
+      "type": "string",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "optional",
+      "status": "production"
+    },
+    "ael_poisson_ratio": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the istropic Poisson ratio as calculated with AEL.",
+      "title": "AEL Poisson ratio",
+      "format": "%g",
+      "type": "number",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "ael_poisson_ratio=0.216",
+      "status": "production",
+      "syntax": "$aurl/?ael_poisson_ratio"
+    },
+    "ael_shear_modulus_reuss": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the shear modulus as calculated using the Reuss method with AEL.",
+      "title": "AEL Reuss shear modulus",
+      "format": "%g",
+      "type": "number",
+      "units": "GPa",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "ael_shear_modulus_reuss=73.787",
+      "status": "production",
+      "syntax": "$aurl/?ael_shear_modulus_reuss"
+    },
+    "ael_shear_modulus_voigt": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the shear modulus as calculated using the Voigt method with AEL.",
+      "title": "AEL Voigt shear modulus",
+      "format": "%g",
+      "type": "number",
+      "units": "GPa",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "ael_shear_modulus_voigt=73.799",
+      "status": "production",
+      "syntax": "$aurl/?ael_shear_modulus_voigt"
+    },
+    "ael_shear_modulus_vrh": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the shear modulus as calculated using the Voigt-Reuss-Hill average with AEL.",
+      "title": "AEL VRH shear modulus",
+      "format": "%g",
+      "type": "number",
+      "units": "GPa",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "ael_shear_modulus_vrh=73.793",
+      "status": "production",
+      "syntax": "$aurl/?ael_shear_modulus_vrh"
+    },
+    "ael_stiffness_tensor": {
+      "__comment__": [
+      ],
+      "description": "AEL stiffness tensor",
+      "title": "Elastic constants (stiffness tensor)",
+      "format": "%g",
+      "function": "matrix",
+      "type": "numbers",
+      "units": "",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "status": "production",
+      "syntax": "$aurl/?ael_compliance_tensor"
+    },
+    "ael_stiffness_tensor_file": {
+      "__comment__": [
+        ""
+      ],
+      "description": "AEL elastic constants file",
+      "title": "AEL Elastic Constants (stiffness tensor)",
+      "href": "$aurl/AEL_Elastic_constants.out",
+      "linktext": "AEL_Elastic_constants.out",
+      "format": "%s",
+      "function": "link",
+      "type": "string",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "optional",
+      "status": "production"
+    },
+    "aflow_version": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the version number of AFLOW used to perform the calculation.",
+      "title": "aflow version",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "aflow_version=aflow30641",
+      "status": "production",
+      "syntax": "$aurl/?aflow_version"
+    },
+    "aflowlib_date": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the date of the AFLOW post-processor which generated the entry for the library.",
+      "title": "material generation date",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "aflowlib_date=20140204_13:10:39_GMT-5",
+      "status": "production",
+      "syntax": "$aurl/?aflowlib_date"
+    },
+    "aflowlib_entries": {
+      "__comment__": [
+        ""
+      ],
+      "description": "For projects and set-layer entries, aflowlib_entries lists the available sub-entries which are associated with the $aurl of the subdirectories.  By parsing $aurl/?aflowlib_entries (containing $aurl/aflowlib_entries_number entries) the user finds further locations to interrogate.",
+      "title": "aflowlib entries",
+      "format": "%s",
+      "type": "strings",
+      "delimiter": ",",
+      "inclusion": "conditional",
+      "expression": "directive",
+      "example": "aflowlib_entries=AgAl,AgAs,AgAu,AgB_h,AgBa_sv,AgBe_sv,AgBi_d,AgBr,AgCa_sv,...",
+      "status": "production",
+      "syntax": "$aurl/?aflowlib_entries"
+    },
+    "aflowlib_entries_number": {
+      "__comment__": [
+        ""
+      ],
+      "description": "For projects and set-layer entries, aflowlib_entrieslists the available sub-entries which are associated with the $aurl of the subdirectories.  By parsing $aurl/?aflowlib_entries (containing $aurl/aflowlib_entries_number entries) the user finds further locations to interrogate.",
+      "title": "aflowlib entry count",
+      "format": "%d",
+      "type": "number",
+      "inclusion": "conditional",
+      "expression": "directive",
+      "example": "aflowlib_entries_number=654",
+      "status": "production",
+      "syntax": "$aurl/?aflowlib_entries_number"
+    },
+    "aflowlib_json": {
+      "__comment__": [
+        ""
+      ],
+      "description": "aflowlib.json file",
+      "title": "aflowlib.json",
+      "href": "$aurl/aflowlib.json",
+      "linktext": "aflowlib.json",
+      "format": "%s",
+      "function": "link",
+      "type": "string",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "mandatory",
+      "status": "production"
+    },
+    "aflowlib_out": {
+      "__comment__": [
+        ""
+      ],
+      "description": "aflowlib.out file",
+      "title": "aflowlib.out",
+      "href": "$aurl/aflowlib.out",
+      "linktext": "aflowlib.out",
+      "format": "%s",
+      "function": "link",
+      "type": "string",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "mandatory",
+      "status": "production"
+    },
+    "aflowlib_version": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the version of the AFLOW post-processor which generated the entry for the library.",
+      "title": "aflowlib version",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "aflowlib_version=3.1.103",
+      "status": "production",
+      "syntax": "$aurl/?aflowlib_version"
+    },
+    "agl_acoustic_debye": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the acoustic Debye temperature as calculated with AGL.",
+      "title": "AGL acoustic Debye temperature",
+      "format": "%g",
+      "type": "number",
+      "units": "K",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "agl_acoustic_debye=492",
+      "status": "production",
+      "syntax": "$aurl/?agl_acoustic_debye"
+    },
+    "agl_bulk_modulus_isothermal_300K": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the isothermal bulk modulus at 300K as calculated with AGL.",
+      "title": "AGL isothermal bulk modulus 300K",
+      "format": "%g",
+      "type": "number",
+      "units": "GPa",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "agl_bulk_modulus_isothermal_300K=96.6",
+      "status": "production",
+      "syntax": "$aurl/?agl_bulk_modulus_isothermal_300K"
+    },
+    "agl_bulk_modulus_static_300K": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the static bulk modulus at 300K as calculated with AGL.",
+      "title": "AGL static bulk modulus 300K",
+      "format": "%g",
+      "type": "number",
+      "units": "GPa",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "agl_bulk_modulus_static_300K=99.6",
+      "status": "production",
+      "syntax": "$aurl/?agl_bulk_modulus_static_300K"
+    },
+    "agl_complete_output": {
+      "__comment__": [
+        ""
+      ],
+      "description": "AGL complete output file",
+      "title": "AGL Complete Output",
+      "href": "$aurl/AGL.out",
+      "linktext": "AGL.out",
+      "format": "%s",
+      "function": "link",
+      "type": "string",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "optional",
+      "status": "production"
+    },
+    "agl_debye": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the Debye temperature as calculated with AGL.",
+      "title": "AGL Debye temperature",
+      "format": "%g",
+      "type": "number",
+      "units": "K",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "agl_debye=620",
+      "status": "production",
+      "syntax": "$aurl/?agl_debye"
+    },
+    "agl_energies_temperature": {
+      "__comment__": [
+        ""
+      ],
+      "description": "AGL energy vs temperature file",
+      "title": "AGL Energy versus Temperature",
+      "href": "$aurl/AGL_energies_temperature.out",
+      "linktext": "AGL_energies_temerature.out",
+      "format": "%s",
+      "function": "link",
+      "type": "string",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "optional",
+      "status": "production"
+    },
+    "agl_gruneisen": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the Gruneisen parameter as calculated with AGL.",
+      "title": "AGL Gruneisen parameter",
+      "format": "%g",
+      "type": "number",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "agl_gruneisen=2.06",
+      "status": "production",
+      "syntax": "$aurl/?agl_gruneisen"
+    },
+    "agl_heat_capacity_Cp_300K": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the heat capacity at constant pressure as calculated with AGL at 300K.",
+      "title": "AGL heat capacity Cp",
+      "format": "%g",
+      "type": "number",
+      "units": "k<sub>B</sub>/cell",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "agl_heat_capacity_Cp_300K=5.502",
+      "status": "production",
+      "syntax": "$aurl/?agl_heat_capacity_Cp_300K"
+    },
+    "agl_heat_capacity_Cv_300K": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the heat capacity at constant volume as calculated with AGL at 300K.",
+      "title": "AGL heat capacity Cv",
+      "format": "%g",
+      "type": "number",
+      "units": "k<sub>B</sub>/cell",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "agl_heat_capacity_Cv_300K=4.901",
+      "status": "production",
+      "syntax": "$aurl/?agl_heat_capacity_Cv_300K"
+    },
+    "agl_output": {
+      "__comment__": [
+        ""
+      ],
+      "description": "AGL output file",
+      "title": "AGL Output",
+      "href": "$aurl/aflow.agl.out",
+      "linktext": "aflow.agl.out",
+      "format": "%s",
+      "function": "link",
+      "type": "string",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "optional",
+      "status": "production"
+    },
+    "agl_thermal_conductivity_300K": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the thermal conductivity as calculated with AGL at 300K.",
+      "title": "AGL thermal conductivity",
+      "format": "%g",
+      "type": "number",
+      "units": "W/m K",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "agl_thermal_conductivity_300K=24.41",
+      "status": "production",
+      "syntax": "$aurl/?agl_thermal_conductivity_300K"
+    },
+    "agl_thermal_expansion_300K": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the thermal expansion as calculated with AGL at 300K.",
+      "title": "AGL thermal expansion",
+      "format": "%g",
+      "type": "number",
+      "units": "K<sup>-1</sup>",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "agl_thermal_expansion_300K=4.997e-05",
+      "status": "production",
+      "syntax": "$aurl/?agl_thermal_expansion_300K"
+    },
+    "agl_thermal_properties_temperature": {
+      "__comment__": [
+        ""
+      ],
+      "description": "AGL thermal properties vs. temperature file",
+      "title": "AGL Thermal Properties versus Temperature",
+      "href": "$aurl/AGL_thermal_properties_temperature.out",
+      "linktext": "AGL_thermal_properties_temperature.out",
+      "format": "%s",
+      "function": "link",
+      "type": "string",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "optional",
+      "status": "production"
+    },
+    "auid": {
+      "__comment__": [
+        ""
+      ],
+      "description": "AFLOWLIB Unique Identifier for the entry, AUID, which can be used as a publishable object identifier.",
+      "title": "AFLOWLIB Unique Identifier",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "mandatory",
+      "expression": "declarative",
+      "example": "auid=aflow:e9c6d914c4b8d9ca",
+      "status": "production",
+      "syntax": "$aurl/?auid"
+    },
+    "aurl": {
+      "__comment__": [
+        ""
+      ],
+      "description": "AFLOWLIB Uniform Resource Locator returns the AURL of the entry.",
+      "title": "AFLOWLIB Uniform Resource Locator",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "mandatory",
+      "expression": "declarative",
+      "example": "aurl=aflowlib.duke.edu:AFLOWDATA/LIB3_RAW/Bi_dRh_pvTi_sv/T0003.ABC:LDAU2",
+      "status": "production",
+      "syntax": "$aurl/?aurl"
+    },
+    "author": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the name (not necessarily an individual) and affiliation associated with authorship of the data.",
+      "title": "author",
+      "format": "%s",
+      "type": "strings",
+      "delimiter": ",",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "author=Marco_Buongiorno_Nardelli,Ohad_Levy,Jesus_Carrete",
+      "status": "development",
+      "syntax": "$aurl/?author"
+    },
+    "bader_atomic_volumes": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the volume of each atom of the primitive cell as calculated by the Bader Atoms in Molecules Analysis. This volume encapsulates the electron density associated with each atom above a threshold of 0.0001 electrons.",
+      "title": "atomic volume per atom",
+      "format": "%g",
+      "function": "atom_resolved",
+      "type": "numbers",
+      "delimiter": ",",
+      "units": "&Aring;<sup>3</sup>",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "bader_atomic_volumes=15.235,12.581,13.009",
+      "status": "production",
+      "syntax": "$aurl/?bader_atomic_volumes"
+    },
+    "bader_net_charges": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns a comma delimited set of partial charges per atom of the primitive cell as calculated by the Bader Atoms in Molecules Analysis.",
+      "title": "partial charge per atom",
+      "format": "%g",
+      "function": "atom_resolved",
+      "type": "numbers",
+      "delimiter": ",",
+      "units": "e<sup>-</sup>",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "bader_net_charges=0.125,0.125,-0.25",
+      "status": "production",
+      "syntax": "$aurl/?bader_net_charges"
+    },
+    "bader_output": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Bader output file",
+      "title": "Bader output",
+      "href": "$aurl/$prototype_abader.out",
+      "linktext": "$prototype_abader.out",
+      "format": "%s",
+      "function": "link",
+      "type": "string",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "optional",
+      "status": "production"
+    },
+    "bands_app": {
+      "description": "Interactive band structure app",
+      "title": "",
+      "href": "bands",
+      "format": "%s",
+      "function": "app",
+      "type": "string",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "optional",
+      "status": "production"
+    },
+    "Bravais_lattice_lattice_system": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the Bravais lattice system of the lattice of the relaxed structure.",
+      "title": "Bravais lattice system (lattice)",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "Bravais_lattice_lattice_system=cubic",
+      "status": "production",
+      "syntax": "$aurl/?Bravais_lattice_lattice_system"
+    },
+    "Bravais_lattice_lattice_system_orig": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the Bravais lattice system of the lattice of the original unrelaxed structure before the calculation.",
+      "title": "Bravais lattice system (lattice, orig.)",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "Bravais_lattice_lattice_system=cubic",
+      "status": "production",
+      "syntax": "$aurl/?Bravais_lattice_lattice_system_orig"
+    },
+    "Bravais_lattice_lattice_type": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the Bravais lattice type of the lattice of the relaxed structure.",
+      "title": "Bravais lattice primitive (lattice)",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "Bravais_lattice_lattice_type=BCC",
+      "status": "production",
+      "syntax": "$aurl/?Bravais_lattice_lattice_type"
+    },
+    "Bravais_lattice_lattice_type_orig": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the Bravais lattice type of the lattice of the original unrelaxed structure before the calculation.",
+      "title": "Bravais lattice primitive (lattice, orig)",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "Bravais_lattice_lattice_type_orig=BCC",
+      "status": "production",
+      "syntax": "$aurl/?Bravais_lattice_lattice_type_orig"
+    },
+    "Bravais_lattice_lattice_variation_type": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the Bravais lattice variation of the lattice of the relaxed structure.",
+      "title": "Bravais lattice variation (lattice)",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "Bravais_lattice_lattice_variation_type=BCC",
+      "status": "production",
+      "syntax": "$aurl/?Bravais_lattice_lattice_variation_type"
+    },
+    "Bravais_lattice_lattice_variation_type_orig": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the Bravais lattice variation of the lattice of the original unrelaxed structure before the calculation.",
+      "title": "Bravais lattice variation (lattice, orig.)",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "Bravais_lattice_lattice_variation_type_orig=BCC",
+      "status": "production",
+      "syntax": "$aurl/?Bravais_lattice_variation_lattice_type_orig"
+    },
+    "Bravais_lattice_orig": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the Bravais lattice of the original unrelaxed structure before the calculation.",
+      "title": "original Bravais lattice",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "Bravais_lattice_orig=MCLC",
+      "status": "production",
+      "syntax": "$aurl/?Bravais_lattice_orig"
+    },
+    "Bravais_lattice_relax": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the Bravais lattice of the original relaxed structure after the calculation.",
+      "title": "Bravais lattice",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "forces",
+        "kpoints",
+        "stress_tensor"
+      ],
+      "example": "Bravais_lattice_relax=MCLC",
+      "status": "production",
+      "syntax": "$aurl/?Bravais_lattice_relax"
+    },
+    "Bravais_superlattice_lattice_system": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the lattice system of the superlattice of the relaxed structure.",
+      "title": "Superlattice lattice system",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "Bravais_superlattice_lattice_system=cubic",
+      "status": "production",
+      "syntax": "$aurl/?Bravais_superlattice_lattice_system"
+    },
+    "Bravais_superlattice_lattice_system_orig": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the lattice system of the superlattice of the original unrelaxed structure before the calculation.",
+      "title": "Superlattice lattice system (orig.)",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "Bravais_superlattice_lattice_system=cubic",
+      "status": "production",
+      "syntax": "$aurl/?Bravais_superlattice_lattice_system_orig"
+    },
+    "Bravais_superlattice_lattice_type": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the lattice type of the superlattice of the relaxed structure.",
+      "title": "Superlattice primitive unit cell",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "Bravais_superlattice_lattice_type=BCC",
+      "status": "production",
+      "syntax": "$aurl/?Bravais_superlattice_lattice_type"
+    },
+    "Bravais_superlattice_lattice_type_orig": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the lattice type of the superlattice of the original unrelaxed structure before the calculation.",
+      "title": "Bravais lattice primitive (lattice, orig.)",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "Bravais_superlattice_lattice_type_orig=BCC",
+      "status": "production",
+      "syntax": "$aurl/?Bravais_superlattice_lattice_type_orig"
+    },
+    "Bravais_superlattice_lattice_variation_type": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the lattice variation of the superlattice of the relaxed structure.",
+      "title": "Superlattice variation",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "Bravais_superlattice_lattice_variation_type=BCC",
+      "status": "production",
+      "syntax": "$aurl/?Bravais_superlattice_lattice_variation_type"
+    },
+    "Bravais_superlattice_lattice_variation_type_orig": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the lattice variation of the superlattice of the original unrelaxed structure before the calculation.",
+      "title": "Superlattice variation (orig.)",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "Bravais_superlattice_lattice_variation_type_orig=BCC",
+      "status": "production",
+      "syntax": "$aurl/?Bravais_superlattice_variation_lattice_type_orig"
+    },
+    "bz_image": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Brillouin zone image",
+      "title": "Brillouin Zone",
+      "href": "../lib/images/brillouin/$lattice.PNG",
+      "linktext": "Brillouin Zone of $prototype",
+      "format": "%s",
+      "function": "image",
+      "type": "string",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "optional",
+      "status": "production"
+    },
+    "bz_image_orig": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Brillouin zone image of the original unrelaxed structure before the calculation",
+      "title": "Brillouin Zone",
+      "href": "../lib/images/brillouin/$lattice_orig.PNG",
+      "linktext": "Brillouin Zone of $prototype",
+      "format": "%s",
+      "function": "image",
+      "type": "string",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "optional",
+      "status": "production"
+    },
+    "calculation_cores": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Number of processors/cores used for the calculation.",
+      "title": "used CPU cores",
+      "format": "%d",
+      "type": "number",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "calculation_cores=32",
+      "status": "production",
+      "syntax": "$aurl/?calculation_cores"
+    },
+    "calculation_memory": {
+      "__comment__": [
+        ""
+      ],
+      "description": "The maximum memory used for the calculation.",
+      "title": "used RAM",
+      "format": "%d",
+      "type": "number",
+      "units": "MB",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "calculation_memory=32",
+      "status": "production",
+      "syntax": "$aurl/?calculation_memory"
+    },
+    "calculation_time": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Total time taken for the calculation.",
+      "title": "used time",
+      "format": "%g",
+      "type": "number",
+      "units": "seconds",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "calculation_time=32",
+      "status": "production",
+      "syntax": "$aurl/?calculation_time"
+    },
+    "catalog": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the context set for the calculation.",
+      "title": "catalog",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "catalog=icsd",
+      "status": "production",
+      "syntax": "$aurl/?catalog"
+    },
+    "code": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the software name and version used to perform the simulation.",
+      "title": "ab initio code",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "code=vasp.4.6.35",
+      "status": "production",
+      "syntax": "$aurl/?code"
+    },
+    "composition": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns a comma delimited composition description of the structure entry in the calculated cell.",
+      "title": "composition",
+      "format": "%d",
+      "type": "numbers",
+      "delimiter": ",",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "composition=2,6,6",
+      "status": "production",
+      "syntax": "$aurl/?composition"
+    },
+    "compound": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the composition description of the compound in the calculated cell.",
+      "title": "chemical formula",
+      "format": "%s",
+      "function": "compound",
+      "type": "string",
+      "inclusion": "mandatory",
+      "expression": "declarative",
+      "example": "compound=Co2Er6Si6",
+      "status": "production",
+      "syntax": "$aurl/?compound"
+    },
+    "corresponding": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the name (not necessarily an individual) and affiliation associated with the data origin concerning correspondence about data.",
+      "title": "coresponding",
+      "format": "%s",
+      "type": "strings",
+      "delimiter": ",",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "corresponding=M_Buongiorno_Nardelli_mbn@unt.edu",
+      "status": "development",
+      "syntax": "$aurl/?corresponding"
+    },
+    "crystal_class" : {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the crystal class of the relaxed structure",
+      "title": "crystal class",
+      "format": "%s",
+      "type": "string",
+      "delimiter": "",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "crystal_class=tetrahedral",
+      "status": "production",
+      "syntax": "$aurl/?crystal_class"
+    },
+    "crystal_class_orig" : {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the crystal class of the input structure",
+      "title": "crystal class (orig)",
+      "format": "%s",
+      "type": "string",
+      "delimiter": "",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "crystal_class_orig=tetrahedral",
+      "status": "production",
+      "syntax": "$aurl/?crystal_class_orig"
+    },
+    "crystal_family" : {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the crystal family of the relaxed structure",
+      "title": "crystal family",
+      "format": "%s",
+      "type": "string",
+      "delimiter": "",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "crystal_family=cubic",
+      "status": "production",
+      "syntax": "$aurl/?crystal_family"
+    },
+    "crystal_family_orig" : {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the crystal family of the input structure",
+      "title": "crystal family (orig.)",
+      "format": "%s",
+      "type": "string",
+      "delimiter": "",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "crystal_family_orig=cubic",
+      "status": "production",
+      "syntax": "$aurl/?crystal_family_orig"
+    },
+    "crystal_system" : {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the crystal system of the relaxed structure",
+      "title": "crystal system",
+      "format": "%s",
+      "type": "string",
+      "delimiter": "",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "crystal_system=cubic",
+      "status": "production",
+      "syntax": "$aurl/?crystal_system"
+    },
+    "crystal_system_orig" : {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the crystal system of the input structure",
+      "title": "crystal system (orig.)",
+      "format": "%s",
+      "type": "string",
+      "delimiter": "",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "crystal_system_orig=cubic",
+      "status": "production",
+      "syntax": "$aurl/?crystal_system_orig"
+    },
+    "data_api": {
+      "__comment__": [
+        ""
+      ],
+      "description": "AFLOWLIB version of the entry, API.}",
+      "title": "REST API version",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "mandatory",
+      "expression": "declarative",
+      "example": "data_api=aapi1.0",
+      "status": "production",
+      "syntax": "$aurl/?data_api"
+    },
+    "data_language": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Gives the language of the data in AFLOWLIB.",
+      "title": "data language",
+      "format": "%s",
+      "type": "strings",
+      "delimiter": ",",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "data_language=aflowlib",
+      "status": "development",
+      "syntax": "$aurl/?data_language"
+    },
+    "data_source": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Gives the source of the data in AFLOWLIB.",
+      "title": "data source",
+      "format": "%s",
+      "type": "string",
+      "delimiter": ",",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "data_source=aflowlib",
+      "status": "production",
+      "syntax": "$aurl/?data_source"
+    },
+    "delta_electronic_energy_convergence": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the change in energy from the last step of the convergence iteration.",
+      "title": "Electronic Energy of Convergence Step",
+      "format": "%g",
+      "type": "number",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "example": "delta_electronic_energy_convergence=6.09588e-05",
+      "status": "development",
+      "syntax": "$aurl/?delta_electronic_energy_convergence"
+    },
+    "delta_electronic_energy_threshold": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the maximimum change in energy required for the convergence iteration.",
+      "title": "Electronic Energy of Convergence Threshold",
+      "format": "%g",
+      "type": "number",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "delta_electronic_energy_threshold=0.0001",
+      "status": "development",
+      "syntax": "$aurl/?delta_electronic_energy_threshold"
+    },
+    "density": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the mass density in grams/cm3.",
+      "title": "mass density",
+      "format": "%g",
+      "type": "number",
+      "units": "g/cm<sup>3</sup>",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints",
+        "pressure_residual",
+        "stress_tensor"
+      ],
+      "example": "density=7.76665",
+      "status": "production",
+      "syntax": "$aurl/?density"
+    },
+    "dft_type": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns information about the pseudopotential type, the exchange correlation functional used (normal or hybrid) and use of GW.",
+      "title": "DFT type",
+      "format": "%s",
+      "type": "strings",
+      "delimiter": ",",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "dft_type=PAW_PBE,HSE06",
+      "status": "production",
+      "syntax": "$aurl/?dft_type"
+    },
+    "edata_bands": {
+      "__comment__": [
+        ""
+      ],
+      "description": "edata for the band structure calculation",
+      "title": "Extended crystallographic data for the band structure",
+      "href": "$aurl/edata.bands.out",
+      "linktext": "edata.bands.out",
+      "format": "%s",
+      "function": "link",
+      "type": "string",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "optional",
+      "status": "production"
+    },
+    "edata_orig": {
+      "__comment__": [
+        ""
+      ],
+      "description": "edata for the original structure",
+      "title": "Extended crystallographic data for the original structure",
+      "href": "$aurl/edata.orig.out",
+      "linktext": "edata.orig.out",
+      "format": "%s",
+      "function": "link",
+      "type": "string",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "optional",
+      "status": "production"
+    },
+    "edata_relax": {
+      "__comment__": [
+        ""
+      ],
+      "description": "edata for the relaxed structure",
+      "title": "Extended crystallographic data for the relaxed structure",
+      "href": "$aurl/edata.relax.out",
+      "linktext": "edata.relax.out",
+      "format": "%s",
+      "function": "link",
+      "type": "string",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "optional",
+      "status": "production"
+    },
+    "eentropy_atom": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the electronic entropy of the atom used to converge the ab initio calculation (smearing).",
+      "title": "atomistic electronic entropy",
+      "format": "%g",
+      "type": "number",
+      "units": "eV/atom",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "eentropy_atom=0.0011",
+      "status": "production",
+      "syntax": "$aurl/?eentropy_atom"
+    },
+    "eentropy_cell": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the electronic entropy of the unit cell used to converge the ab initio calculation (smearing).",
+      "title": "unit cell electronic entropy",
+      "format": "%g",
+      "type": "number",
+      "units": "eV/atom",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "eentropy_cell=0.0011",
+      "status": "production",
+      "syntax": "$aurl/?eentropy_cell"
+    },
+    "Egap": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Band gap calculated with the approximations and pseudopotentials described by other keywords.",
+      "title": "electronic energy band gap",
+      "format": "%g",
+      "type": "number",
+      "units": "eV",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "Egap=2.5",
+      "status": "production",
+      "syntax": "$aurl/?Egap"
+    },
+    "Egap_fit": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Simple cross-validated correction (fit) of Egap.",
+      "title": "fitted band gap",
+      "format": "%g",
+      "type": "number",
+      "units": "eV",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "Egap_fit=3.5",
+      "status": "production",
+      "syntax": "$aurl/?Egap_fit"
+    },
+    "Egap_type": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Given a band gap, this keyword describes if the system is a metal, a semi-metal, an insulator with direct or indirect band gap.",
+      "title": "band gap type",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "Egap_type=insulator_direct",
+      "status": "production",
+      "syntax": "$aurl/?Egap_type"
+    },
+    "energy_atom": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the total ab initio energy per atom- the value of energy_cell/$N$).",
+      "title": "atomic energy",
+      "format": "%g",
+      "type": "number",
+      "units": "eV/atom",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints",
+        "pressure_residual",
+        "stress_tensor"
+      ],
+      "example": "energy_atom=-82.1656",
+      "status": "production",
+      "syntax": "$aurl/?energy_atom"
+    },
+    "energy_cell": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the total ab initio energy of the unit cell, E. At T=0K and p=0, this is the internal energy of the system (per unit cell).",
+      "title": "unit cell energy",
+      "format": "%g",
+      "type": "number",
+      "units": "eV",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints",
+        "pressure_residual",
+        "stress_tensor"
+      ],
+      "example": "energy_cell=-82.1656",
+      "status": "production",
+      "syntax": "$aurl/?energy_cell"
+    },
+    "energy_cutoff": {
+      "__comment__": [
+        ""
+      ],
+      "description": "The energy cut-off used during the DFT calculations.",
+      "title": "energy cutoff",
+      "format": "%d",
+      "type": "number",
+      "delimiter": "",
+      "units": "eV",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "energy_cutoff=384.1,384.1,384.1",
+      "status": "production",
+      "syntax": "$aurl/?energy_cutoff"
+    },
+    "enthalpy_atom": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the enthalpy per atom- the value of enthalpy_cell/N).",
+      "title": "enthalpy per atom",
+      "format": "%g",
+      "type": "number",
+      "units": "eV/atom",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints",
+        "pressure_residual",
+        "stress_tensor"
+      ],
+      "example": "enthalpy_atom=-82.1656",
+      "status": "production",
+      "syntax": "$aurl/?enthalpy_atom"
+    },
+    "enthalpy_cell": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the enthalpy of the system of the unit cell, H = E + PV.",
+      "title": "enthalpy per cell",
+      "format": "%g",
+      "type": "number",
+      "units": "eV",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints",
+        "pressure_residual",
+        "stress_tensor"
+      ],
+      "example": "enthalpy_cell=-82.1656",
+      "status": "production",
+      "syntax": "$aurl/?enthalpy_cell"
+    },
+    "enthalpy_formation_atom": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the formation enthalpy DeltaHFatomic per atom).",
+      "title": "formation enthalpy per atom",
+      "format": "%g",
+      "type": "number",
+      "units": "eV/atom",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "enthalpy_formation_atom=-33.1587",
+      "status": "production",
+      "syntax": "$aurl/?enthalpy_formation_atom"
+    },
+    "enthalpy_formation_cell": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the formation enthalpy DeltaHF per unit cell.",
+      "title": "formation enthalpy per cell",
+      "format": "%g",
+      "type": "number",
+      "units": "eV",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "enthalpy_formation_cell=-33.1587",
+      "status": "production",
+      "syntax": "$aurl/?enthalpy_formation_cell"
+    },
+    "entropic_temperature": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the entropic temperature for the structure.",
+      "title": "entropic temperature",
+      "format": "%g",
+      "type": "number",
+      "units": "Kelvin",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "entropic_temperature=1072.1",
+      "status": "production",
+      "syntax": "$aurl/?entropic_temperature"
+    },
+    "files": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Provides access to the input and output files used in the simulation (provenance data).",
+      "title": "I/O files",
+      "format": "%s",
+      "type": "strings",
+      "delimiter": ",",
+      "inclusion": "conditional",
+      "expression": "directive",
+      "example": "files=Bi_dRh_pv.33.cif,Bi_dRh_pv.33.png,CONTCAR.relax,CONTCAR.relax1,",
+      "status": "production",
+      "syntax": "$aurl/?files"
+    },
+    "forces": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Final quantum mechanical forces (Fi,Fj,Fk) in the notation of the code.",
+      "title": "Quantum Forces",
+      "format": "%g",
+      "type": "numbers",
+      "delimiter": ";,",
+      "units": "eV/&Aring;",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "forces=0,-0.023928,0.000197;0,0.023928,-0.000197;...",
+      "status": "development",
+      "syntax": "$aurl/?forces"
+    },
+    "geometry": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns geometrical data describing the unit cell in the usual a,b,c,alpha,beta,gamma notation.",
+      "title": "unit cell basis",
+      "format": "%g",
+      "function": "lattice",
+      "type": "numbers",
+      "delimiter": " ",
+      "units": "",
+      "inclusion": "mandatory",
+      "expression": "declarative",
+      "example": "geometry=18.82,18.82,18.82,32.41,32.41,32.41",
+      "status": "production",
+      "verification": [
+        "energy_cutoff",
+        "kpoints",
+        "pressure_residual",
+        "stress_tensor"
+      ],
+      "syntax": "$aurl/?geometry"
+    },
+    "geometry_orig": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns geometrical data describing the unit cell of the original structure in the usual a,b,c,alpha,beta,gamma notation.",
+      "title": "unit cell basis (orig.)",
+      "format": "%g",
+      "function": "lattice",
+      "type": "numbers",
+      "delimiter": " ",
+      "units": "",
+      "inclusion": "mandatory",
+      "expression": "declarative",
+      "example": "geometry_orig=18.82,18.82,18.82,32.41,32.41,32.41",
+      "status": "production",
+      "syntax": "$aurl/?geometry_orig"
+    },
+    "icsd_number": {
+      "__comment__": [
+        ""
+      ],
+      "description": "ICSD entry number",
+      "title": "ICSD entry",
+      "format": "%d",
+      "function": "icsd",
+      "type": "number",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "icsd_number=410874",
+      "status": "production",
+      "syntax": "$aurl/?icsd_number"
+    },
+    "incar_bands_file": {
+      "__comment__": [
+      ],
+      "description": "INCAR file for the band structure calculation",
+      "title": "INCAR (bands)",
+      "format": "%s",
+      "function": "link",
+      "href": "$aurl/INCAR.bands",
+      "linktext": "INCAR for bands calculation",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "optional",
+      "status": "production"
+    },
+    "keywords": {
+      "__comment__": [
+        ""
+      ],
+      "description": "This includes the list of keywords available in the entry, separated by commas.",
+      "title": "Title",
+      "format": "%s",
+      "type": "strings",
+      "delimiter": ",",
+      "inclusion": "mandatory",
+      "expression": "directive",
+      "example": "keywords=aurl,auid,loop,code,compound,prototype,nspecies,natoms,...",
+      "status": "deprecated",
+      "syntax": "$aurl/?keywords"
+    },
+    "kpoints": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Set of k-point meshes uniquely identifying the various steps of the calculations, e.g. relaxation, static and electronic band structure (specifying the k-space symmetry points of the structure).",
+      "title": "k-point mesh",
+      "format": "%s",
+      "type": "strings",
+      "delimiter": ":,",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "kpoints=10,10,10;16,16,16;G-X-W-K-G-L-U-W-L-K+U-X",
+      "status": "deprecated",
+      "syntax": "$aurl/?kpoints"
+    },
+    "kpoints_bands_nkpts": {
+      "__comment__": [
+        ""
+      ],
+      "description": "number of k-point between paths for the band structure calculation",
+      "title": "number of k-points between high symmetry points",
+      "format": "%d",
+      "type": "number",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "optional",
+      "example": "kpoints_bands_nkpts=20",
+      "status": "production",
+      "syntax": "$aurl/?kpoints_bands_nkpts"
+    },
+    "kpoints_bands_file": {
+      "__comment__": [
+      ],
+      "description": "KPOINTS file for the band structure calculation",
+      "title": "KPOINTS (bands)",
+      "format": "%s",
+      "function": "link",
+      "type": "string",
+      "href": "$aurl/KPOINTS.bands",
+      "linktext": "KPOINTS for bands calculation",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "optional",
+      "status": "production"
+    },
+    "kpoints_bands_path": {
+      "__comment__": [
+        ""
+      ],
+      "description": "k-point path for the band structure calculation",
+      "title": "k-point path for the band structure calculation (aflowlib/VASP)",
+      "format": "%s",
+      "type": "strings",
+      "delimiter": " | ",
+      "units": "",
+      "inclusion": "optional",
+      "example": "kpoints_bands_path=G-X-W-K-G-L-U-W-K-K-U-X",
+      "status": "production",
+      "syntax": "$aurl/?kpoints_bands_path"
+    },
+    "kpoints_relax": {
+      "__comment__": [
+        ""
+      ],
+      "description": "k-point grid for the structural relaxation calculation",
+      "title": "k-point grid for the relax calculation",
+      "format": "%d",
+      "type": "numbers",
+      "delimiter": " &times; ",
+      "units": "",
+      "inclusion": "mandatory",
+      "example": "kpoints_relax=14,14,14",
+      "status": "production",
+      "syntax": "$aurl/?kpoints_relax"
+    },
+    "kpoints_relax_file": {
+      "__comment__": [
+      ],
+      "description": "KPOINTS file for the relaxation calculation",
+      "title": "KPOINTS (relax)",
+      "format": "%s",
+      "function": "link",
+      "type": "string",
+      "href": "$aurl/KPOINTS.relax",
+      "linktext": "KPOINTS for relaxation calculation",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "optional",
+      "status": "production"
+    },
+    "kpoints_static": {
+      "__comment__": [
+        ""
+      ],
+      "description": "k-point grid for the static calculation",
+      "title": "k-point grid for the static calculation",
+      "format": "%d",
+      "type": "numbers",
+      "delimiter": " &times; ",
+      "units": "",
+      "inclusion": "optional",
+      "example": "kpoints_static=14,14,14",
+      "status": "production",
+      "syntax": "$aurl/?kpoints_static"
+    },
+    "kpoints_static_file": {
+      "__comment__": [
+      ],
+      "description": "KPOINTS file for the static calculation",
+      "title": "KPOINTS (static)",
+      "format": "%s",
+      "function": "link",
+      "type": "string",
+      "href": "$aurl/KPOINTS.static",
+      "linktext": "KPOINTS for static calculation",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "optional",
+      "status": "production"
+    },
+    "lattice_system_orig": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Return the lattice system and lattice variation (Brillouin zone) of the original-unrelaxed structure before the calculation.",
+      "title": "original lattice system",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "mandatory",
+      "expression": "declarative",
+      "example": "lattice_system_orig=rhombohedral",
+      "status": "production",
+      "syntax": "$aurl/?lattice_system_orig"
+    },
+    "lattice_system_relax": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Return the lattice system and lattice variation (Brillouin zone) of the relaxed structure after the calculation.",
+      "title": "lattice system",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "forces",
+        "kpoints",
+        "stress_tensor"
+      ],
+      "example": "lattice_system_relax=rhombohedral",
+      "status": "production",
+      "syntax": "$aurl/?lattice_system_relax"
+    },
+    "lattice_variation_orig": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Return the lattice system and lattice variation (Brillouin zone) of the original-unrelaxed structure before the calculation.",
+      "title": "original lattice variation",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "mandatory",
+      "expression": "declarative",
+      "example": "lattice_variation_orig=rhombohedral",
+      "status": "production",
+      "syntax": "$aurl/?lattice_variation_orig"
+    },
+    "lattice_variation_relax": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Return the lattice system and lattice variation (Brillouin zone) of the relaxed structure after the calculation.",
+      "title": "lattice variation",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "forces",
+        "kpoints",
+        "stress_tensor"
+      ],
+      "example": "lattice_variation_relax=rhombohedral",
+      "status": "production",
+      "syntax": "$aurl/?lattice_variation_relax"
+    },
+    "ldau_j": {
+      "__comment__": [
+        ""
+      ],
+      "description": "This vector of numbers contains the J parameters of the DFT+U calculations, based on a corrective functional inspired by the Hubbard model.",
+      "title": "LDAU J",
+      "format": "%g",
+      "function": "species_resolved",
+      "type": "numbers",
+      "delimiter": ",",
+      "units": "eV",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "ldau_j=0,0,0",
+      "status": "production",
+      "syntax": "$aurl/?ldau_j"
+    },
+    "ldau_l": {
+      "__comment__": [
+        ""
+      ],
+      "description": "This vector of numbers contains the orbitals of the DFT+U calculations, based on a corrective functional inspired by the Hubbard model.",
+      "title": "LDAU l",
+      "format": "%d",
+      "function": "species_resolved",
+      "type": "numbers",
+      "delimiter": ",",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "ldau_l=2,0,0",
+      "status": "production",
+      "syntax": "$aurl/?ldau_l"
+    },
+    "ldau_TLUJ": {
+      "__comment__": [
+        ""
+      ],
+      "description": "This vector of numbers contains the parameters of the DFT+U calculations, based on a corrective functional inspired by the Hubbard model.",
+      "title": "on site coulomb interaction",
+      "format": "%s",
+      "type": "numbers",
+      "delimiter": ";,",
+      "inclusion": "mandatory",
+      "expression": "declarative",
+      "example": "ldau_TLUJ=2;2,0,0;5,0,0;0,0,0",
+      "status": "deprecated",
+      "syntax": "$aurl/?ldau_TLUJ"
+    },
+    "ldau_type": {
+      "__comment__": [
+        ""
+      ],
+      "description": "The LDAU type of the DFT+U calculations, based on a corrective functional inspired by the Hubbard model.",
+      "title": "LDAU type",
+      "format": "%s",
+      "function": "ldau",
+      "type": "number",
+      "delimiter": "",
+      "inclusion": "mandatory",
+      "expression": "declarative",
+      "example": "ldau_type=2",
+      "status": "production",
+      "syntax": "$aurl/?ldau_type"
+    },
+    "ldau_u": {
+      "__comment__": [
+        ""
+      ],
+      "description": "This vector of numbers contains the U parameters of the DFT+U calculations, based on a corrective functional inspired by the Hubbard model.",
+      "title": "LDAU U",
+      "format": "%g",
+      "function": "species_resolved",
+      "type": "numbers",
+      "delimiter": ",",
+      "units": "eV",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "ldau_u=5,0,0",
+      "status": "production",
+      "syntax": "$aurl/?ldau_u"
+    },
+    "loop": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Informs the user of the type of post-processing that was performed.",
+      "title": "process category",
+      "format": "%s",
+      "type": "strings",
+      "delimiter": ", ",
+      "inclusion": "optional",
+      "expression": "directive",
+      "example": "loop=thermodynamics,bands,magnetic",
+      "status": "production",
+      "syntax": "$aurl/?loop"
+    },
+    "natoms": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the number of atoms in the unit cell of the structure entry. The number can be non integer if partial occupation is considered within appropriate approximations.",
+      "title": "number of atoms in unit cell",
+      "format": "%d",
+      "type": "number",
+      "inclusion": "mandatory",
+      "expression": "declarative",
+      "example": "natoms=12",
+      "status": "production",
+      "syntax": "$aurl/?natoms"
+    },
+    "nbondxx": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Nearest neighbors distances of the relaxed structure per ordered set of species Ai,Aj greater than or equal to i.",
+      "title": "nearest neighbor distances",
+      "format": "%g",
+      "type": "numbers",
+      "delimiter": ",",
+      "units": "&Aring;",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "forces",
+        "kpoints",
+        "pressure_residual",
+        "stress_tensor"
+      ],
+      "example": "nbondxx=1.2599,1.0911,1.0911,1.7818,1.2599,1.7818",
+      "status": "production",
+      "syntax": "$aurl/?nbondxx"
+    },
+    "node_CPU_Cores": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Information about the number of cores in the node/cluster where the calculation was performed.",
+      "title": "available CPU cores",
+      "format": "%d",
+      "type": "number",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "node_CPU_Cores=12",
+      "status": "production",
+      "syntax": "$aurl/?node_CPU_Cores"
+    },
+    "node_CPU_MHz": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Information about the CPU speed in the node/cluster where the calculation was performed.",
+      "title": "CPU rate",
+      "format": "%d",
+      "type": "number",
+      "units": "Megahertz",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "node_CPU_MHz=12",
+      "status": "production",
+      "syntax": "$aurl/?node_CPU_MHz"
+    },
+    "node_CPU_Model": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Information about the CPU model in the node/cluster where the calculation was performed.",
+      "title": "CPU model",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "node_CPU_Model=12",
+      "status": "production",
+      "syntax": "$aurl/?node_CPU_Model"
+    },
+    "node_RAM_GB": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Information about the RAM in the node/cluster where the calculation was performed.",
+      "title": "available RAM",
+      "format": "%g",
+      "type": "number",
+      "units": "Gigabytes",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "node_RAM_GB=12",
+      "status": "production",
+      "syntax": "$aurl/?node_RAM_GB"
+    },
+    "nspecies": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the number of species in the system (e.g., binary = 2, ternary = 3, etc.).",
+      "title": "species count",
+      "format": "%d",
+      "type": "number",
+      "inclusion": "mandatory",
+      "expression": "declarative",
+      "example": "nspecies=3",
+      "status": "production",
+      "syntax": "$aurl/?nspecies"
+    },
+    "Pearson_symbol_orig": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the Pearson symbol of the original-unrelaxed structure before the calculation.",
+      "title": "original Pearson symbol",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "mandatory",
+      "expression": "declarative",
+      "example": "Pearson_symbol_orig=mS32",
+      "status": "production",
+      "syntax": "$aurl/?Pearson_symbol_orig"
+    },
+    "Pearson_symbol_relax": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the Pearson symbol of the relaxed structure after the calculation.",
+      "title": "Pearson symbol",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "stress_tensor"
+      ],
+      "example": "Pearson_symbol_relax=mS32",
+      "status": "production",
+      "syntax": "$aurl/?Pearson_symbol_relax"
+    },
+    "Pearson_symbol_superlattice": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the superlattice Pearson symbol of the relaxed structure.",
+      "title": "Superlattice Pearson symbol",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "Pearson_symbol_superlattice=cI52",
+      "status": "production",
+      "syntax": "$aurl/?Pearson_symbol_superlattice"
+    },
+    "Pearson_symbol_superlattice_orig": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the superlattice Pearson symbol of the original-unrelaxed structure before the calculation.",
+      "title": "Superlattice Pearson symbol (orig.)",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "Pearson_symbol_superlattice_orig=cI52",
+      "status": "production",
+      "syntax": "$aurl/?Pearson_symbol_superlattice_orig"
+    },
+    "point_group_Hermann_Mauguin": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the point group of the crystal in the Hermann-Mauguin notation.",
+      "title": "point group (Hermann-Mauguin)",
+      "format": "%s",
+      "function": "crystallography",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "point_group_Hermann_Mauguin=-43m",
+      "status": "production",
+      "syntax": "$aurl/?point_group_Hermann_Mauguin"
+    },
+    "point_group_Hermann_Mauguin_orig": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the point group of the input structure in the Hermann-Mauguin notation.",
+      "title": "point group (Hermann-Mauguin, orig.)",
+      "format": "%s",
+      "function": "crystallography",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "point_group_Hermann_Mauguin_orig=-43m",
+      "status": "production",
+      "syntax": "$aurl/?point_group_Hermann_Mauguin_orig"
+    },
+    "point_group_orbifold": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the point group orbifold of the crystal.",
+      "title": "point group orbifold",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "point_group_orbifold=*332",
+      "status": "production",
+      "syntax": "$aurl/?point_group_orbifold"
+    },
+    "point_group_orbifold_orig": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the point group orbifold of the input structure.",
+      "title": "point group orbifold (orig.)",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "point_group_orbifold_orig=*332",
+      "status": "production",
+      "syntax": "$aurl/?point_group_orbifold_orig"
+    },
+    "point_group_order": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the point group order of the crystal.",
+      "title": "point group order",
+      "format": "%d",
+      "type": "number",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "point_group_order=24",
+      "status": "production",
+      "syntax": "$aurl/?point_group_order"
+    },
+    "point_group_order_orig": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the point group order of the input structure.",
+      "title": "point group order (orig.)",
+      "format": "%d",
+      "type": "number",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "point_group_order_orig=24",
+      "status": "production",
+      "syntax": "$aurl/?point_group_order_orig"
+    },
+    "point_group_Schoenflies": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the point group of the crystal in the Schoenflies notation.",
+      "title": "point group (Schoenflies)",
+      "format": "%s",
+      "function": "crystallography",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "point_group_Schoenflies=T_d",
+      "status": "production",
+      "syntax": "$aurl/?point_group_Schoenflies"
+    },
+    "point_group_Schoenflies_orig": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the point group of the input structure in the Schoenflies notation.",
+      "title": "point group (Schoenflies, orig.)",
+      "format": "%s",
+      "function": "crystallography",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "point_group_Schoenflies_orig=T_d",
+      "status": "production",
+      "syntax": "$aurl/?point_group_Schoenflies_orig"
+    },
+    "point_group_structure": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the point group structure of the crystal.",
+      "title": "point group structure",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "point_group_structure=symmetric",
+      "status": "production",
+      "syntax": "$aurl/?point_group_structure"
+    },
+    "point_group_structure_orig": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the point group structure of the input structure.",
+      "title": "point group structure (orig.)",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "point_group_structure_orig=symmetric",
+      "status": "production",
+      "syntax": "$aurl/?point_group_structure_orig"
+    },
+    "point_group_type": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the point group type of the crystal.",
+      "title": "point group type",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "point_group_type=non-centrosymmetric,non-enantiomorphic,non-polar",
+      "status": "production",
+      "syntax": "$aurl/?point_group_type"
+    },
+    "point_group_type_orig": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the point group type of the input structure.",
+      "title": "point group type (orig.)",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "point_group_type_orig=non-centrosymmetric,non-enantiomorphic,non-polar",
+      "status": "production",
+      "syntax": "$aurl/?point_group_type_orig"
+    },
+    "positions_cartesian": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Final Cartesian positions (xi,xj,xk) in the notation of the code.",
+      "title": "Cartesian positions",
+      "format": "%g",
+      "function": "atom_resolved",
+      "type": "numbers",
+      "delimiter": ";,",
+      "units": "&Aring;",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "forces",
+        "kpoints",
+        "pressure_residual",
+        "stress_tensor"
+      ],
+      "example": "positions_cartesian=0,0,0;18.18438,0,2.85027;...",
+      "status": "development",
+      "syntax": "$aurl/?positions_cartesian"
+    },
+    "positions_fractional": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Final fractional positions (xi,xj,xk) with respect to the unit cell as specified in $reometry.",
+      "title": "fractional positions",
+      "format": "%g",
+      "function": "atom_resolved",
+      "type": "numbers",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "forces",
+        "kpoints",
+        "pressure_residual",
+        "stress_tensor"
+      ],
+      "example": "positions_fractional=0,0,0;0.25,0.25,0.25;...",
+      "status": "development",
+      "syntax": "$aurl/?positions_fractional"
+    },
+    "pressure": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the target pressure selected for the simulation.",
+      "title": "external pressure",
+      "format": "%g",
+      "type": "number",
+      "units": "kbar",
+      "inclusion": "mandatory",
+      "expression": "declarative",
+      "example": "pressure=10.0",
+      "status": "production",
+      "syntax": "$aurl/?pressure"
+    },
+    "pressure_final": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the external pressure achieved by the simulation.",
+      "title": "resulting pressure",
+      "format": "%g",
+      "type": "number",
+      "units": "kbar",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "example": "pressure_final=10.0",
+      "status": "development",
+      "syntax": "$aurl/?pressure_final"
+    },
+    "pressure_residual": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the external pressure achieved by the simulation.",
+      "title": "residual pressure",
+      "format": "%g",
+      "type": "number",
+      "units": "kbar",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "example": "pressure_residual=10.0",
+      "status": "development",
+      "syntax": "$aurl/?pressure_residual"
+    },
+    "Pullay_stress": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns a metric of the basis set inconsistency for the calculation.",
+      "title": "Pulay Stress",
+      "format": "%g",
+      "type": "number",
+      "units": "kbar",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "example": "Pullay_stress=10.0",
+      "status": "deprecated",
+      "syntax": "$aurl/?Pullay_stress"
+    },
+    "Pulay_stress": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns a metric of the basis set inconsistency for the calculation.",
+      "title": "Pulay Stress",
+      "format": "%g",
+      "type": "number",
+      "units": "kbar",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "example": "pulay_stress=10.0",
+      "status": "development",
+      "syntax": "$aurl/?pulay_stress"
+    },
+    "PV_atom": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Pressure multiplied by volume of the atom.",
+      "title": "atomic pressure*volume",
+      "format": "%g",
+      "type": "number",
+      "units": "eV/atom",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "PV_atom=12.13",
+      "status": "production",
+      "syntax": "$aurl/?PV_atom"
+    },
+    "PV_cell": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Pressure multiplied by volume of the unit cell.",
+      "title": "unit cell pressure*volume",
+      "format": "%g",
+      "type": "number",
+      "units": "eV",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "PV_cell=12.13",
+      "status": "production",
+      "syntax": "$aurl/?PV_cell"
+    },
+    "prototype": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the AFLOW unrelaxed prototype which was used for the calculation.",
+      "title": "original prototype",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "mandatory",
+      "expression": "declarative",
+      "example": "prototype=T0001.A2BC",
+      "status": "production",
+      "syntax": "$aurl/?prototype"
+    },
+    "reciprocal_geometry" : {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the reciprocal lattice of the relaxed structure in the usual a,b,c,alpha,beta,gamma notation.",
+      "title": "reciprocal lattice",
+      "format": "%g",
+      "function": "lattice_reciprocal",
+      "type": "numbers",
+      "uints": "&Aring;<sup>-1</sup>",
+      "delimiter": " ",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "reciprocal_geometry_relax=0.8747,0.9747,0.8747,60.0,60.0,60.0",
+      "status": "production",
+      "syntax": "$aurl/?reciprocal_geometry"
+    },
+    "reciprocal_geometry_orig" : {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the reciprocal lattice of the input structure in the usual a,b,c,alpha,beta,gamma notation.",
+      "title": "reciprocal lattice (orig.)",
+      "format": "%g",
+      "function": "lattice_reciprocal",
+      "type": "numbers",
+      "uints": "&Aring;<sup>-1</sup>",
+      "delimiter": " ",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "reciprocal_geometry_orig=0.8747,0.9747,0.8747,60.0,60.0,60.0",
+      "status": "production",
+      "syntax": "$aurl/?reciprocal_geometry_orig"
+    },
+    "reciprocal_lattice_type" : {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the lattice type of the reciprocal lattice.",
+      "title": "reciprocal lattice type",
+      "format": "%s",
+      "type": "string",
+      "delimiter": "",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "reciprocal_lattice_type=FCC",
+      "status": "production",
+      "syntax": "$aurl/?reciprocal_lattice_type"
+    },
+    "reciprocal_lattice_type_orig" : {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the lattice type of the input reciprocal lattice.",
+      "title": "reciprocal lattice type (orig.)",
+      "format": "%s",
+      "type": "string",
+      "delimiter": "",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "reciprocal_lattice_type_orig=FCC",
+      "status": "production",
+      "syntax": "$aurl/?reciprocal_lattice_type_orig"
+    },
+    "reciprocal_lattice_variation_type" : {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the lattice variation of the reciprocal lattice.",
+      "title": "reciprocal lattice variation",
+      "format": "%s",
+      "type": "string",
+      "delimiter": "",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "reciprocal_lattice_variation_type=FCC",
+      "status": "production",
+      "syntax": "$aurl/?reciprocal_lattice_variation_type"
+    },
+    "reciprocal_lattice_variation_type_orig" : {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the lattice variation of the input reciprocal lattice.",
+      "title": "reciprocal lattice variation (orig.)",
+      "format": "%s",
+      "type": "string",
+      "delimiter": "",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "reciprocal_lattice_variation_type_orig=FCC",
+      "status": "production",
+      "syntax": "$aurl/?reciprocal_lattice_variation_type_orig"
+    },
+    "reciprocal_volume_cell" : {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the volume of the reciprocal cell.",
+      "title": "reciprocal cell volume",
+      "format": "%g",
+      "type": "number",
+      "uints": "&Aring;<sup>-3</sup>",
+      "delimiter": "",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "reciprocal_volume_cell=0.4733",
+      "status": "production",
+      "syntax": "$aurl/?reciprocal_volume_cell"
+    },
+    "reciprocal_volume_cell_orig" : {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the volume of the input reciprocal cell.",
+      "title": "reciprocal cell volume (orig.)",
+      "format": "%g",
+      "type": "number",
+      "uints": "&Aring;<sup>-3</sup>",
+      "delimiter": "",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "reciprocal_volume_cell_orig=0.4733",
+      "status": "production",
+      "syntax": "$aurl/?reciprocal_volume_cell_orig"
+    },
+    "relaxed_positions_abinit": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Geometry file for the relaxed structure (ABINIT format)",
+      "title": "Relaxed positions (aflowlib/ABINIT)",
+      "href": "$aurl/CONTCAR.relax.abinit",
+      "linktext": "ABINIT-GEOMETRY",
+      "format": "%s",
+      "function": "link",
+      "type": "string",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "optional",
+      "status": "production"
+    },
+    "relaxed_positions_aims": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Geometry file for the relaxed structure (AIMS format)",
+      "title": "Relaxed positions (aflowlib/AIMS)",
+      "href": "$aurl/CONTCAR.relax.aims",
+      "linktext": "AIMS-GEOMETRY",
+      "format": "%s",
+      "function": "link",
+      "type": "string",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "optional",
+      "status": "production"
+    },
+    "relaxed_positions_qe": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Geometry file for the relaxed structure (Quantum Espresso format)",
+      "title": "Relaxed positions (aflowlib/QE)",
+      "href": "$aurl/CONTCAR.relax.qe",
+      "linktext": "QE-GEOMETRY",
+      "format": "%s",
+      "function": "link",
+      "type": "string",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "optional",
+      "status": "production"
+    },
+    "relaxed_positions_vasp": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Geometry file for the relaxed structure (VASP format)",
+      "title": "Relaxed positions (aflowlib/VASP)",
+      "href": "$aurl/CONTCAR.relax.vasp",
+      "linktext": "VASP-CONTCAR",
+      "format": "%s",
+      "function": "link",
+      "type": "string",
+      "delimiter": "",
+      "units": "",
+      "inclusion": "optional",
+      "status": "production"
+    },
+    "scintillation_attenuation_length": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the scintillation attenuation length of the compound in cm.",
+      "title": "attenuation length",
+      "format": "%g",
+      "type": "number",
+      "units": "cm",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "scintillation_attenuation_length=2.21895",
+      "status": "production"
+    },
+    "sg": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Evolution of the space group of the compound.  The first, second and third string represent space group name/number before the first, after the first, and after the last relaxation of the calculation.",
+      "title": "space group of compound",
+      "format": "%s",
+      "type": "strings",
+      "delimiter": ",",
+      "inclusion": "mandatory",
+      "expression": "directive",
+      "verification": [
+        "energy_cutoff",
+        "forces",
+        "kpoints",
+        "stress_tensor"
+      ],
+      "example": "sg=Fm-3m#225,Fm-3m#225,Fm-3m#225",
+      "status": "production",
+      "syntax": "$aurl/?sg"
+    },
+    "sg2": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Evolution of the space group of the compound.  The first, second and third string represent space group name/number before the first, after the first, and after the last relaxation of the calculation.",
+      "title": "refined space group of compound ",
+      "format": "%s",
+      "type": "strings",
+      "delimiter": ",",
+      "inclusion": "mandatory",
+      "expression": "directive",
+      "verification": [
+        "energy_cutoff",
+        "forces",
+        "kpoints",
+        "stress_tensor"
+      ],
+      "example": "sg2=Fm-3m#225,Fm-3m#225,Fm-3m#225",
+      "status": "production",
+      "syntax": "$aurl/?sg2"
+    },
+    "spacegroup_orig": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the spacegroup number of the original-unrelaxed structure before the calculation.",
+      "title": "original space group number",
+      "format": "%d",
+      "function": "spacegroup",
+      "type": "number",
+      "inclusion": "mandatory",
+      "expression": "declarative",
+      "example": "spacegroup_orig=225",
+      "status": "production",
+      "syntax": "$aurl/?spacegroup_orig"
+    },
+    "spacegroup_relax": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the spacegroup number of the relaxed structure after the calculation.",
+      "title": "space group number",
+      "format": "%d",
+      "function": "spacegroup",
+      "type": "number",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "forces",
+        "kpoints",
+        "stress_tensor"
+      ],
+      "example": "spacegroup_relax=225",
+      "status": "production",
+      "syntax": "$aurl/?spacegroup_relax"
+    },
+    "species": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Species of the atoms in this material.",
+      "title": "atomic species",
+      "format": "%s",
+      "type": "strings",
+      "delimiter": ",",
+      "inclusion": "mandatory",
+      "expression": "declarative",
+      "example": "species=Y,Zn,Zr",
+      "status": "production",
+      "syntax": "$aurl/?species"
+    },
+    "species_pp": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Pseudopotentials of the atomic species.",
+      "title": "pseudopotential of chemical species",
+      "format": "%s",
+      "function": "species_resolved",
+      "type": "strings",
+      "delimiter": ",",
+      "inclusion": "mandatory",
+      "expression": "declarative",
+      "example": "species_pp=Y,Zn,Zr",
+      "status": "production",
+      "syntax": "$aurl/?species_pp"
+    },
+    "species_pp_ZVAL": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the number of valence electrons of the atomic species.",
+      "title": "valence atoms per species",
+      "format": "%d",
+      "function": "species_resolved",
+      "type": "numbers",
+      "delimiter": ",",
+      "units": "e<sup>-</sup>",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "species_pp_ZVAL=3",
+      "status": "production",
+      "syntax": "$aurl/?species_pp_ZVAL"
+    },
+    "species_pp_version": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Species of the atoms, pseudopotentials species, and pseudopotential versions.",
+      "title": "pseudopotential version and species",
+      "format": "%s",
+      "function": "species_resolved",
+      "type": "strings",
+      "delimiter": ",",
+      "inclusion": "mandatory",
+      "expression": "declarative",
+      "example": "species_pp_version=Y,Zn,Zr",
+      "status": "production",
+      "syntax": "$aurl/?species_pp_version"
+    },
+    "spinD": {
+      "__comment__": [
+        ""
+      ],
+      "description": "For spin polarized calculations, the spin decomposition over the atoms of the cell.",
+      "title": "spin decomposition over unit cell",
+      "format": "%g",
+      "function": "atom_resolved",
+      "type": "numbers",
+      "delimiter": ",",
+      "units": "&mu;<sub>B</sub>",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "spinD=0.236,0.236,-0.023,1.005",
+      "status": "production",
+      "syntax": "$aurl/?spinD"
+    },
+    "spinF": {
+      "__comment__": [
+        ""
+      ],
+      "description": "For spin polarized calculations, the magnetization of the cell at the Fermi level.",
+      "title": "magnetization of unit cell at Fermi level",
+      "format": "%g",
+      "type": "number",
+      "units": "&mu;<sub>B</sub>",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "spinF=0.410879",
+      "status": "production",
+      "syntax": "$aurl/?spinF"
+    },
+    "spin_atom": {
+      "__comment__": [
+        ""
+      ],
+      "description": "For spin polarized calculations, the magnetization per atom.",
+      "title": "atomic spin polarization",
+      "format": "%g",
+      "type": "number",
+      "units": "&mu;<sub>B</sub>/atom",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "spin_atom=2.16419",
+      "status": "production",
+      "syntax": "$aurl/?spin_atom"
+    },
+    "spin_cell": {
+      "__comment__": [
+        ""
+      ],
+      "description": "For spin polarized calculations, the total magnetization of the cell.",
+      "title": "unit cell spin polarization",
+      "format": "%g",
+      "type": "number",
+      "units": "&mu;<sub>B</sub>",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "spin_cell=2.16419",
+      "status": "production",
+      "syntax": "$aurl/?spin_cell"
+    },
+    "sponsor": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns information about funding agencies and other sponsors for the data.",
+      "title": "sponsor",
+      "format": "%s",
+      "type": "strings",
+      "delimiter": ",",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "sponsor=DOD_N000141310635,NIST_70NANB12H163",
+      "status": "development",
+      "syntax": "$aurl/?sponsor"
+    },
+    "stoich": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Similar to composition, returns a comma delimited stoichiometry description of the structure entry in the calculated cell.",
+      "title": "unit cell stoichiometry",
+      "format": "%s",
+      "type": "numbers",
+      "delimiter": ",",
+      "inclusion": "optional",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "stoichiometry=0.5,0.25,0.25",
+      "status": "deprecated",
+      "syntax": "$aurl/?stoichiometry"
+    },
+    "stoichiometry": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Similar to composition, returns a comma delimited stoichiometry description of the structure entry in the calculated cell.",
+      "title": "unit cell stoichiometry",
+      "format": "%g",
+      "type": "numbers",
+      "delimiter": ",",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "stoichiometry=0.5,0.25,0.25",
+      "status": "production",
+      "syntax": "$aurl/?stoichiometry"
+    },
+    "stress_tensor": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the stress tensor of the completed calculation.",
+      "title": "Stress Tensor",
+      "format": "%g",
+      "type": "numbers",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "example": "stress_tensor=-0.96,-0,-0,-0,-0.96,-0,-0,-0,-0.96",
+      "status": "development",
+      "syntax": "$aurl/?stress_tensor"
+    },
+    "title": {
+      "__comment__": [
+        ""
+      ],
+      "description": "The title of the AFLOW calculation",
+      "title": "title",
+      "format": "%s",
+      "type": "string",
+      "inclusion": "mandatory",
+      "expression": "declarative",
+      "example": "title=AgAl.411",
+      "status": "production",
+      "syntax": "$aurl/?title"
+    },
+    "valence_cell_iupac": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns IUPAC valence, the maximum number of univalent atoms that may combine with the atoms.",
+      "title": "unit cell IUPAC valence",
+      "format": "%d",
+      "type": "number",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "valence_cell_iupac=22",
+      "status": "production",
+      "syntax": "$aurl/?valence_cell_iupac"
+    },
+    "valence_cell_std": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns standard valence, the maximum number of univalent atoms that may combine with the atoms.",
+      "title": "unit cell standard valence",
+      "format": "%d",
+      "type": "number",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "kpoints"
+      ],
+      "example": "valence_cell_std=22",
+      "status": "production",
+      "syntax": "$aurl/?valence_cell_std"
+    },
+    "volume_atom": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the volume per atom in the unit cell.",
+      "title": "atomic volume",
+      "format": "%g",
+      "type": "number",
+      "units": "&Aring;<sup>3</sup>/atom",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "forces",
+        "kpoints",
+        "pressure_residual",
+        "stress_tensor"
+      ],
+      "example": "volume_atom=100.984",
+      "status": "production",
+      "syntax": "$aurl/?volume_atom"
+    },
+    "volume_cell": {
+      "__comment__": [
+        ""
+      ],
+      "description": "Returns the volume of the unit cell.",
+      "title": "unit cell volume",
+      "format": "%g",
+      "type": "number",
+      "units": "&Aring;<sup>3</sup>",
+      "inclusion": "mandatory",
+      "expression": "derivative",
+      "verification": [
+        "energy_cutoff",
+        "forces",
+        "kpoints",
+        "pressure_residual",
+        "stress_tensor"
+      ],
+      "example": "volume_cell=100.984",
+      "status": "production",
+      "syntax": "$aurl/?volume_cell"
+    },
+    "Wyckoff_letters": {
+      "__comment__": [
+        ""
+      ],
+      "descriptions": "Returns the Wyckoff letters for each site.",
+      "title": "Wyckoff letters",
+      "format": "%s",
+      "function": "atom_resolved",
+      "type": "strings",
+      "units": "",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "Wyckoff_letters=g,c,a",
+      "status": "development",
+      "syntax": "$aurl/?Wyckoff_letters"
+    },
+    "Wyckoff_letters_orig": {
+      "__comment__": [
+        ""
+      ],
+      "descriptions": "Returns the Wyckoff letters for each site of the unrelaxed structure.",
+      "title": "Wyckoff letters (orig.)",
+      "format": "%s",
+      "function": "atom_resolved",
+      "type": "strings",
+      "units": "",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "Wyckoff_letters_orig=g,c,a",
+      "status": "development",
+      "syntax": "$aurl/?Wyckoff_letters_orig"
+    },
+    "Wyckoff_multiplicities": {
+      "__comment__": [
+        ""
+      ],
+      "descriptions": "Returns the Wyckoff multiplicity for each site.",
+      "title": "Wyckoff multiplicities",
+      "format": "%d",
+      "function": "atom_resolved",
+      "type": "numbers",
+      "units": "",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "Wyckoff_multiplicities=24,8,2",
+      "status": "development",
+      "syntax": "$aurl/?Wyckoff_multiplicities"
+    },
+    "Wyckoff_multiplicities_orig": {
+      "__comment__": [
+        ""
+      ],
+      "descriptions": "Returns the Wyckoff multiplicity for each site of the unrelaxed structure.",
+      "title": "Wyckoff multiplicities (orig.)",
+      "format": "%d",
+      "function": "atom_resolved",
+      "type": "strings",
+      "units": "",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "Wyckoff_multiplicities_orig=24,8,2",
+      "status": "development",
+      "syntax": "$aurl/?Wyckoff_multiplicities_orig"
+    },
+    "Wyckoff_site_symmetries": {
+      "__comment__": [
+        ""
+      ],
+      "descriptions": "Returns the Wyckoff symmetry for each site.",
+      "title": "Wyckoff symmetries",
+      "format": "%s",
+      "function": "atom_resolved",
+      "type": "strings",
+      "units": "",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "Wyckoff_site_symmetries=m..,.-3.,m-3.",
+      "status": "development",
+      "syntax": "$aurl/?Wyckoff_site_symmetries"
+    },
+    "Wyckoff_site_symmetries_orig": {
+      "__comment__": [
+        ""
+      ],
+      "descriptions": "Returns the Wyckoff symmetry for each site of the unrelaxed structure.",
+      "title": "Wyckoff symmetries (orig.)",
+      "format": "%s",
+      "function": "atom_resolved",
+      "type": "strings",
+      "units": "",
+      "inclusion": "optional",
+      "expression": "declarative",
+      "example": "Wyckoff_site_symmetries_orig=m..,.-3.,m-3.",
+      "status": "development",
+      "syntax": "$aurl/?Wyckoff_site_symmetries_orig"
+    }
+  }
+}

@@ -1,0 +1,387 @@
+{
+  "class": [
+    {"description": "intended for document organization"},
+    {
+      "title": "Entry",
+      "id": "entry",
+      "xhost.flag": "XHOST.FLAG::CALCULATION",
+      "subclasses": [
+        {
+          "title": null,
+          "id": null,
+          "xhost.flag": null,
+          "properties": [
+            "aflowlib_out",
+            "aflowlib_json",
+            "auid",
+            "aurl",
+            "icsd_number",
+            "aflowlib_date"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Relaxed Structure",
+      "id": "crystal",
+      "xhost.flag": "XHOST.FLAG::EDATA_RELAX",
+      "subclasses": [
+        {
+          "title": "Bravais Lattice of the Crystal",
+          "id": "bravais_lattice_crystal_relax",
+          "xhost.flag": null,
+          "properties": [
+            "spacegroup_relax",
+            "Pearson_symbol_relax",
+            "Bravais_lattice_relax",
+            "lattice_variation_relax",
+            "lattice_system_relax"
+          ]
+        },
+        {
+          "title": "Bravais Lattice of the Lattice",
+          "id": "bravais_lattice_lattice_relax",
+          "xhost.flag": null,
+          "properties": [
+            "Bravais_lattice_lattice_type",
+            "Bravais_lattice_lattice_variation_type",
+            "Bravais_lattice_lattice_system"
+          ]
+        },
+        {
+          "title": "Point Group of the Crystal",
+          "id": "point_group_relax",
+          "xhost.flag": null,
+          "properties": [
+            "crystal_family",
+            "crystal_system",
+            "crystal_class",
+            "point_group_Hermann_Mauguin",
+            "point_group_Schoenflies",
+            "point_group_orbifold",
+            "point_group_type",
+            "point_group_order",
+            "point_group_structure"
+          ]
+        },
+        {
+          "title": "Real Space Lattice",
+          "id": "lattice_relax",
+          "xhost.flag": null,
+          "properties": [
+            "geometry",
+            "natoms",
+            "volume_cell",
+            "density",
+            "relaxed_positions_vasp",
+            "relaxed_positions_qe",
+            "relaxed_positions_abinit",
+            "relaxed_positions_aims",
+            "edata_relax"
+          ]
+        },
+        {
+          "title": "Reciprocal Space Lattice",
+          "id": "reciprocal_lattice_relax",
+          "xhost.flag": null,
+          "properties": [
+            "reciprocal_geometry",
+            "reciprocal_lattice_volume",
+            "reciprocal_lattice_type",
+            "reciprocal_lattice_variation_type",
+            "bz_image"
+          ]
+        },
+        {
+          "title": "Superlattice",
+          "id": "superlattice_relax",
+          "xhost.flag": null,
+          "properties": [
+            "Bravais_superlattice_lattice_type",
+            "Bravais_superlattice_lattice_variation_type",
+            "Bravais_superlattice_lattice_system",
+            "Pearson_symbol_superlattice"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Original Structure",
+      "id": "crystal_orig",
+      "xhost.flag": "XHOST.FLAG::EDATA_ORIG",
+      "subclasses": [
+        {
+          "title": "Bravais Lattice of the Crystal",
+          "id": "bravais_lattice_crystal_orig",
+          "xhost.flag": null,
+          "properties": [
+            "spacegroup_orig",
+            "Pearson_symbol_orig",
+            "Bravais_lattice_orig",
+            "lattice_variation_orig",
+            "lattice_system_orig"
+          ]
+        },
+        {
+          "title": "Bravais Lattice of the Lattice",
+          "id": "bravais_lattice_lattice_orig",
+          "xhost.flag": null,
+          "properties": [
+            "Bravais_lattice_lattice_type_orig",
+            "Bravais_lattice_lattice_variation_type_orig",
+            "Bravais_lattice_lattice_system_orig"
+          ]
+        },
+        {
+          "title": "Point Group of the Crystal",
+          "id": "point_group_orig",
+          "xhost.flag": null,
+          "properties": [
+            "crystal_family_orig",
+            "crystal_system_orig",
+            "crystal_class_orig",
+            "point_group_Hermann_Mauguin_orig",
+            "point_group_Schoenflies_orig",
+            "point_group_orbifold_orig",
+            "point_group_type_orig",
+            "point_group_order_orig",
+            "point_group_structure_orig"
+          ]
+        },
+        {
+          "title": "Real Space Lattice",
+          "id": "lattice_orig",
+          "xhost.flag": null,
+          "properties": [
+            "geometry_orig",
+            "natoms_orig",
+            "volume_cell_orig",
+            "density_orig",
+            "edata_orig"
+          ]
+        },
+        {
+          "title": "Reciprocal Space Lattice",
+          "id": "reciprocal_lattice_orig",
+          "xhost.flag": null,
+          "properties": [
+            "reciprocal_geometry_orig",
+            "reciprocal_lattice_volume_orig",
+            "reciprocal_lattice_type_orig",
+            "reciprocal_lattice_variation_type_orig",
+            "bz_image_orig"
+          ]
+        },
+        {
+          "title": "Superlattice",
+          "id": "superlattice_orig",
+          "xhost.flag": null,
+          "properties": [
+            "Bravais_superlattice_lattice_type_orig",
+            "Bravais_superlattice_lattice_variation_type_orig",
+            "Bravais_superlattice_lattice_system_orig",
+            "Pearson_symbol_superlattice_orig"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Thermodynamic Properties",
+      "id": "thermodynamics",
+      "xhost.flag": null,
+      "subclasses": [
+        {
+          "title": null,
+          "id": null,
+          "xhost.flag": "XHOST.FLAG::THERMODYNAMICS",
+          "properties": [
+            "enthalpy_cell",
+            "enthalpy_atom",
+            "energy_cell",
+            "energy_atom"]
+        },
+        {
+          "title": "Thermal Properties",
+          "id": "agl",
+          "xhost.flag": "XHOST.FLAG::AGL",
+          "properties": [
+              "agl_thermal_conductivity_300K",
+              "agl_debye",
+              "agl_acoustic_debye",
+              "agl_gruneisen",
+              "agl_heat_capacity_Cv_300K",
+              "agl_heat_capacity_Cp_300K",
+              "agl_thermal_expansion_300K",
+              "agl_bulk_modulus_static_300K",
+              "agl_bulk_modulus_isothermal_300K",
+              "agl_output",
+              "agl_complete_output",
+              "agl_energies_temperature",
+              "agl_thermal_properties_temperature"
+            ]
+        }
+      ]
+    },
+    {
+      "title": "Mechanical Properties",
+      "id": "mechanical",
+      "xhost.flag": "XHOST.FLAG::AEL",
+      "subclasses": [
+        {
+          "title": null,
+          "id": null,
+          "xhost.flag": null,
+          "properties": [
+            "ael_poisson_ratio",
+            "ael_bulk_modulus_voigt",
+            "ael_bulk_modulus_reuss",
+            "ael_bulk_modulus_vrh",
+            "ael_shear_modulus_voigt",
+            "ael_shear_modulus_reuss",
+            "ael_shear_modulus_vrh",
+            "ael_output",
+            "ael_elastic_constants",
+            "ael_compliance_tensor"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Chemistry",
+      "id": "chemistry",
+      "xhost.flag": null,
+      "subclasses": [
+        {
+          "title": null,
+          "id": null,
+          "xhost.flag": null,
+          "properties": [
+            "compound",
+            "nspecies",
+            "species",
+            "composition",
+            "stoichiometry",
+            "valence_cell_std",
+            "valence_cell_iupac"
+          ]
+        },
+        {
+          "title": "Bader charges",
+          "id": "bader",
+          "xhost.flag": "XHOST.FLAG::BADER",
+          "properties": [
+            "bader_net_charges",
+            "bader_atomic_volumes",
+            "bader_output"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Magnetic Properties",
+      "id": "magnetics",
+      "xhost.flag": "XHOST.FLAG::MAGNETIC",
+      "subclasses": [
+        {
+          "title": null,
+          "id": null,
+          "xhost.flag": null,
+          "properties": [
+            "spinD",
+            "spinF",
+            "spin_cell",
+            "spin_atom"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Scintillation Properties",
+      "id": "scintillation",
+      "xhost.flag": "XHOST.FLAG::SCINTILLATION",
+      "subclasses": [
+        {
+          "title": null,
+          "id": null,
+          "xhost.flag": null,
+          "properties": [
+            "scintillation_attenuation_length"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Electronic Properties",
+      "id": "electronics",
+      "xhost.flag": "XHOST.FLAG::ELECTRONIC",
+      "subclasses": [
+        {
+          "title": null,
+          "id": null,
+          "xhost.flag": null,
+          "properties": [
+            "Egap",
+            "Egap_fit",
+            "Egap_type"
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Calculation Details",
+      "id": "calculation",
+      "xhost.flag": "XHOST.FLAG::CALCULATION",
+      "subclasses": [
+        {
+          "title": "Computational resources",
+          "id": "computational_resources",
+          "xhost.flag": null,
+          "properties": [
+            "calculation_time",
+            "calculation_cores",
+            "node_CPU_MHz",
+            "node_CPU_Cores",
+            "node_CPU_Model",
+            "calculation_memory",
+            "node_RAM_GB"
+          ]
+        },
+        {
+          "title": "Computational parameters",
+          "id": "computational_parameters",
+          "xhost.flag": null,
+          "properties": [
+            "code",
+            "dft_type",
+            "energy_cutoff",
+            "kpoints_relax",
+            "kpoints_static",
+            "kpoints_bands_path",
+            "kpoints_bands_nkpts",
+            "delta_electronic_energy_convergence",
+            "delta_electronic_energy_threshold",
+            "species_pp",
+            "species_pp_version",
+            "species_pp_ZVAL",
+            "ldau_type",
+            "ldau_l",
+            "ldau_u",
+            "ldau_j"
+          ]
+        },
+        {
+          "title": null,
+          "id": null,
+          "xhost.flag": null,
+          "properties": [
+            "aflow_version",
+            "catalog",
+            "aflowlib_version",
+            "data_source",
+            "loop"
+          ]
+        }
+      ]
+    }
+  ]
+}
