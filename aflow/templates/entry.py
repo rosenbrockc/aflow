@@ -1,8 +1,9 @@
 """Provides class and methods for abstracting the data from AFLOW into
 python.
 """
-from aflow.caster import cast
 import aflow.keywords as kw
+from aflow.caster import cast
+
 
 def _val_from_str(attr, value):
     """Retrieves the specified attribute's value, cast to an
@@ -67,8 +68,9 @@ class AflowFiles(list):
         self.aurl = entry._lazy_load("aurl")
 
     def __getitem__(self, key):
-        from six import string_types
         from fnmatch import fnmatch
+
+        from six import string_types
         if isinstance(key, string_types):
             matches = [f for f in self if fnmatch(f, key)]
             if len(matches) == 1:
@@ -128,8 +130,9 @@ class Entry(object):
         if keyword in self.attributes:
             return self.attributes[keyword]
         else:
-            import requests
             import json
+
+            import requests
             aurl = self.attributes["aurl"].replace(".edu:", ".edu/")
             url = "http://{0}?{1}".format(aurl, keyword)
             r = requests.get(url)

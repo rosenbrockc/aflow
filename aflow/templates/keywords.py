@@ -1,8 +1,8 @@
 """Implements classes to represent each keyword with overloaded
 operators to make querying with AFLUX intuitive.
 """
-from six import string_types
 import numpy
+from six import string_types
 
 _all_keywords = []
 """list: of `str` keyword names for which class instances exist within
@@ -27,8 +27,8 @@ def _find_all():
     # Get a reference to the module and its global keyword cache.
     global _all_keywords
     if len(_all_keywords) == 0:
-        import sys
         import inspect
+        import sys
         self = sys.modules[__name__]
         for n, o in inspect.getmembers(self):
             if isinstance(o, Keyword):

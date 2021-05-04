@@ -2,13 +2,17 @@
 creates :class:`numpy.ndarray` for vector or tensor-valued properties.
 """
 import re
+
 import numpy as np
+
 from aflow import msg
 
 _rx_int = re.compile(r"^\d+$")
 
+
 def _strings(value):
-    return list(value.split(','))
+    return list(value.split(","))
+
 
 def _number(value):
     if _rx_int.match(value):
@@ -16,66 +20,67 @@ def _number(value):
     else:
         return float(value)
 
+
 def _numbers(value):
-    svals = list(value.split(','))
+    svals = list(value.split(","))
     vals = list(map(_number, svals))
     return np.array(vals)
 
+
 def _forces(value):
-    atoms = value.split(';')
-    forces = [list(map(float, a.split(','))) for a in atoms]
+    atoms = value.split(";")
+    forces = [list(map(float, a.split(","))) for a in atoms]
     return np.array(forces)
 
+
 def _kpoints(value):
-    parts = value.split(';')
-    relaxation = np.array(list(map(_number, parts[0].split(','))))
+    parts = value.split(";")
+    relaxation = np.array(list(map(_number, parts[0].split(","))))
     if len(parts) == 1:
         # Some entries have only relaxation kpoint information
         return {
             "relaxation": relaxation,
             "static": None,
             "points": None,
-            "nsamples": None
+            "nsamples": None,
         }
-    static = np.array(list(map(_number, parts[1].split(','))))
-    if len(parts) == 3: # pragma: no cover
-        #The web page (possibly outdated) includes an example where
-        #this would be the case. We include it here for
-        #completeness. I haven't found a case yet that we could use in
-        #the unit tests to trigger this.
-        points = parts[-1].split('-')
+    static = np.array(list(map(_number, parts[1].split(","))))
+    if len(parts) == 3:  # pragma: no cover
+        # The web page (possibly outdated) includes an example where
+        # this would be the case. We include it here for
+        # completeness. I haven't found a case yet that we could use in
+        # the unit tests to trigger this.
+        points = parts[-1].split("-")
         nsamples = None
     else:
-        points = parts[-2].split('-')
+        points = parts[-2].split("-")
         nsamples = int(parts[-1])
 
     return {
         "relaxation": relaxation,
         "static": static,
         "points": points,
-        "nsamples": nsamples
+        "nsamples": nsamples,
     }
 
+
 def _ldau_TLUJ(value):
-    parts = value.split(';')
+    parts = value.split(";")
     if len(parts) != 4:
         # This should not occur unless there is an error in the db
-        return {'ldau_params': value}
+        return {"ldau_params": value}
     t, l, u, j = parts
     t = _number(t)
     l = _numbers(l)
     u = _numbers(u)
     j = _numbers(j)
 
-    return {
-        "LDAUTYPE": t,
-        "LDAUL": l,
-        "LDAUU": u,
-        "LDAUJ": j
-    }
+    return {"LDAUTYPE": t, "LDAUL": l, "LDAUU": u, "LDAUJ": j}
+
 
 def _stoich(value):
     return list(map(_number, value.strip().split()))
+
 
 docstrings = {
     "kpoints": """dict: with keys ['relaxation', 'static', 'points', 'nsamples']
@@ -83,22 +88,30 @@ describing the cells for the relaxation and static calculations, the
 k-space symmetry points of the structure and the number of samples.""",
     "ldau_TLUJ": """dict: with keys ['LDAUTYPE', 'LDAUL', 'LDAUU', 'LDAUJ']
 describing the parameters of the DFT+U calculations, based on a corrective functional 
-inspired by the Hubbard model."""
+inspired by the Hubbard model.""",
 }
 """dict: key-value pairs for custom docstrings describing the return
 value of keywords with complex structure.
 """
 
-exceptions = ["forces", "kpoints", "positions_cartesian",
-              "positions_fractional", "spind", "stoich", "ldau_TLUJ"]
+exceptions = [
+    "forces",
+    "kpoints",
+    "positions_cartesian",
+    "positions_fractional",
+    "spind",
+    "stoich",
+    "ldau_TLUJ",
+]
 """list: of AFLOW keywords for which the casting has to be handled in a special
 way.
 """
 
+
 def ptype(atype, keyword):
     """Returns a `str` representing the *python* type for the
     specified AFLOW type and keyword.
-    
+
     Args:
         atype (str): name of the AFLOW type.
         keyword (str): name of the keyword that the value is associated with.
@@ -116,13 +129,14 @@ def ptype(atype, keyword):
         "stoich": "list",
         "ldau_TLUJ": "dict",
         "None": None,
-        None: None
+        None: None,
     }
 
     if keyword not in exceptions:
         return castmap[atype]
     else:
         return castmap[keyword]
+
 
 def cast(atype, keyword, value):
     """Casts the specified value to a python type, using the AFLOW type as a
@@ -131,7 +145,7 @@ def cast(atype, keyword, value):
     .. note:: Unfortunately, some of the AFLOW type names are not descriptive or
       unique enough to make general rule casting possible. Instead, we have to
       encode some exceptions directly in this module.
-    
+
     Args:
         atype (str): name of the AFLOW type.
         keyword (str): name of the keyword that the value is associated with.
@@ -139,7 +153,7 @@ def cast(atype, keyword, value):
     """
     if value is None:
         return
-    
+
     castmap = {
         "string": str,
         "strings": _strings,
@@ -163,4 +177,3 @@ def cast(atype, keyword, value):
             return castmap[keyword](value)
     except:
         msg.err("Cannot cast {}; unknown format.".format(value))
-
