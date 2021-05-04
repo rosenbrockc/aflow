@@ -37,7 +37,7 @@ setup(name='aflow',
       ],
       packages=['aflow'],
       scripts=[],
-      package_data={'aflow': ['templates/*']},
+      package_data={'aflow': ['templates/*', 'api/*.json']},
       include_package_data=True,
       classifiers=[
           'Development Status :: 4 - Beta',
