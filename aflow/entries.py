@@ -1,19 +1,21 @@
 """Provides class and methods for abstracting the data from AFLOW into
 python.
 """
-import aflow.keywords as kw
-from aflow.caster import cast
+# import aflow.keywords as kw
+import aflow.keywords_json as kw
+from aflow.caster_new import cast
 
 
 def _val_from_str(attr, value):
-    """Retrieves the specified attribute's value, cast to an
-    appropriate python type where possible.
+    """Retrieves the specified attribute's value 
+    and handle using the cast function
     """
-    clsname = "_{}".format(attr)
+    # clsname = "_{}".format(attr)
+    clsname = str(attr)
     if hasattr(kw, clsname):
         cls = getattr(kw, clsname)
-        atype = getattr(cls, "atype")
-        return cast(atype, attr, value)
+        # atype = getattr(cls, "atype")
+        return cast(cls, value)
     else:
         return value
 
