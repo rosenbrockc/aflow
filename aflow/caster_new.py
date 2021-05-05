@@ -82,7 +82,10 @@ def cast(cls, value):
     if isinstance(value, main_ptype):
         # Convert numbers to array
         if (main_ptype == list) and (atype == "numbers"):
-            value = _list2vec(value, format=ptype[1])
+            try:
+                value = _list2vec(value, format=ptype[1])
+            except Exception:   # Can happen if the list is not-consistent
+                pass
         return value
         # return value
     elif isinstance(value, str):
