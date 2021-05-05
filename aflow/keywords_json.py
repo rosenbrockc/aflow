@@ -25,7 +25,7 @@ def download_schema():
 # Parse the current schema file from aflow
 # if it does not exist for some reason
 # download from AFLOWLIB
-if schema_file.is_file:
+if schema_file.is_file():
     try:
         with open(schema_file, "r") as fd:
             aapi_schema = json.load(fd)
