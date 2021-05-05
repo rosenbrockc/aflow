@@ -34,7 +34,7 @@ def _str2vec(string, delimiter=";,", format=float, flat=True):
         array = array.ravel()
 
     # If format is str then return normal list
-    if format == "str":
+    if format == str:
         array = array.tolist()
     return array
 
