@@ -194,6 +194,20 @@ class Query(object):
         # Set the finalizer flag so that this object doesn't allow mutations.
         self._final = True
 
+    def set_manual_matchbook(self, matchbook):
+        """Statelessly set the matchbook string part of the aflow query
+           set the self._matchbook to matchbook and make it final
+           matchbook should be a string.
+
+           The method does not enforce type check.
+        """
+        forbidden_chars = ("\"", "@", "\\", "~", "/")
+        if any([c in matchbook for c in forbidden_chars]):
+            raise ValueError(f"The manual matchbook cannot contain the following characters: {forbidden_chars}")
+        else:
+            self._matchbook = matchbook
+            self._final = True
+
     def matchbook(self):
         """Constructs the matchbook portion of the query."""
         if not self._final:
