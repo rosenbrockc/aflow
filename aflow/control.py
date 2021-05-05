@@ -199,9 +199,10 @@ class Query(object):
            set the self._matchbook to matchbook and make it final
            matchbook should be a string.
 
-           The method does not enforce type check.
+           The method does not enforce type check. 
+           Use it only when the default keyword method messes up
         """
-        forbidden_chars = ("\"", "@", "\\", "~", "/")
+        forbidden_chars = ("\"", "@", "\\", "~", "/")  # characters that will cause LUX crash
         if any([c in matchbook for c in forbidden_chars]):
             raise ValueError(f"The manual matchbook cannot contain the following characters: {forbidden_chars}")
         else:

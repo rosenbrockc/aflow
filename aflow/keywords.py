@@ -135,6 +135,8 @@ class Keyword(object):
         return ~(self == other)
 
     def _generic_combine(self, other, token):
+        """ The generic combine has multiple bugs to be fixed, but keep it for now.
+        """
         if other is self:
             # We need to do some special handling. We shouldn't have
             # more than two entries in cache; otherwise something went
