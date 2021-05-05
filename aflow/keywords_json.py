@@ -91,10 +91,10 @@ def _determine_type(dic):
     # get the delimiters
     if atype in ("numbers", "strings"):
         # Default delimiter is dot
-        delimiter = dic.get("delimiter", ",")
-        # some keywords have strange delimiter type, use "," as default
+        delimiter = dic.get("delimiter", ";,")
+        # some keywords have strange delimiter type, use ";," as default
         if delimiter not in (",", ":,"):
-            delimiter = ","
+            delimiter = ";,"
     else:
         delimiter = None
 

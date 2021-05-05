@@ -94,7 +94,7 @@ def cast(cls, value):
         else:
             # if delimiter is not None then it should have 2 ptypes
             value = _str2vec(value, delimiter=cls.delimiter, format=ptype[1])
-        return value
+            return value
 
     # Try enforce type conversion, if fails return the value directly
     try:
