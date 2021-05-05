@@ -208,6 +208,7 @@ class Query(object):
         else:
             self._matchbook = matchbook
             self._final = True
+        return self
 
     def matchbook(self):
         """Constructs the matchbook portion of the query."""
