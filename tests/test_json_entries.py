@@ -12,7 +12,7 @@ import numpy as np
 sample_dir = Path(__file__).parent / "aflowlib_examples"
 
 
-def _read(filename):
+def _read_json(filename):
     with open(filename, "r") as fd:
         raw_entries = json.load(fd)
 
@@ -36,5 +36,5 @@ def _read(filename):
 def test_all():
     for fname in sample_dir.glob("*.json"):
         print(fname)
-        _read(fname)
+        _read_json(fname)
 

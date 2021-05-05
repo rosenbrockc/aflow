@@ -3208,7 +3208,7 @@
       "title": "Wyckoff multiplicities (orig.)",
       "format": "%d",
       "function": "atom_resolved",
-      "type": "strings",
+      "type": "numbers",
       "units": "",
       "inclusion": "optional",
       "expression": "declarative",

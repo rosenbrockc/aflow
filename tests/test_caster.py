@@ -3,14 +3,20 @@
 import pytest
 from aflow.caster_new import cast
 import aflow.keywords_json as KJ
+from aflow.entries import Entry
 import numpy as np
 import itertools
+from pathlib import Path
+import json
+
+sample_dir = Path(__file__).parent / "aflowlib_examples"
 
 
 def _all_types_in_list(lst, type):
     """Is every item in the list with the requested type?
     """
     # If numpy array, just compare the dtype
+    assert isinstance(lst, (list, np.ndarray))
     if isinstance(lst, np.ndarray):
         return lst.dtype == type
     else:
@@ -89,3 +95,29 @@ def test_caster_json():
     assert type(cast(KJ.stoich, "0.2000 0.2000 0.6000")) == str
     assert type(cast(KJ.kpoints,
                      r"11,11,11;13,13,13;\Gamma-X,X-M,M-\Gamma,\Gamma-R,R-X,M-R;20")) == str
+
+
+def _read_json(filename):
+    with open(filename, "r") as fd:
+        raw_entries = json.load(fd)
+
+    entry = Entry(**raw_entries)
+    for key, value in entry.attributes.items():
+        print(key, value)
+        if hasattr(KJ, key):
+            cls = getattr(KJ, key)
+            if cls.status == "deprecated":
+                continue
+            if cls.ptype in (float, int, str):
+                assert isinstance(value, cls.ptype)
+            else:
+                format = cls.ptype[1]
+                assert _all_types_in_list(value, format)
+        else:
+            print(key, value, "Not recognized")
+
+def test_auto_load():
+    for fname in sample_dir.glob("*.json"):
+        print(fname)
+        _read_json(fname)
+
