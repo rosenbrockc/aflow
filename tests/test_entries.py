@@ -40,7 +40,8 @@ def test_files(paper, tmpdir):
     assert path.isfile(target)    
     
 def test_atoms(paper):
-    from aflow import K
+    # from aflow import K
+    import aflow.keywords_json as K
     paper.reset_iter()
 
     from ase.calculators.lj import LennardJones
