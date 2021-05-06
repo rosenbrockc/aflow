@@ -13,6 +13,9 @@ import numpy as np
 def _str2vec(string, delimiter=";,", format=float, flat=True):
     """Parse a string and return numpy vector or matrix
     """
+    # In some cases the keyword is listed but without value
+    if string == "":
+        return None
     # Force using comma as delimiter
     if len(delimiter) == 0:
         delimter = ","
@@ -25,9 +28,21 @@ def _str2vec(string, delimiter=";,", format=float, flat=True):
         array = [s.strip().split(delimiter[1]) for s in array]
     else:
         raise ValueError("Length of delimiter should not exceed 2")
-    
+
     # Use numpy to convert string array to array
-    array = np.array(array, dtype=format)
+    try:
+        array = np.array(array, dtype=format)
+    except Exception:
+        # the exception will happen on Wyckoff_* keywords, currently not using ndarray
+        # force conversion for each item
+        # At most 2 layers, hardcoding should be fine
+        new_array = []
+        for l in array:
+            if isinstance(l, (list, tuple)):
+                new_array.append([format(c) for c in l])
+            else:
+                new_array.append(format(l))
+        return new_array
     
     # Keyword flat makes the array into 1d vec if shape == (1, N) or (N, 1)
     if (flat is True) and (1 in array.shape):
@@ -93,6 +108,7 @@ def cast(cls, value):
             pass                # Use direct conversion
         else:
             # if delimiter is not None then it should have 2 ptypes
+            print(cls, value)
             value = _str2vec(value, delimiter=cls.delimiter, format=ptype[1])
             return value
 

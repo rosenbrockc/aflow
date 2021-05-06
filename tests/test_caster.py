@@ -97,9 +97,17 @@ def test_caster_json():
                      r"11,11,11;13,13,13;\Gamma-X,X-M,M-\Gamma,\Gamma-R,R-X,M-R;20")) == str
 
 
-def _read_json(filename):
-    with open(filename, "r") as fd:
-        raw_entries = json.load(fd)
+def _read_file(filename, format="json"):
+    if format == "json":
+        with open(filename, "r") as fd:
+            raw_entries = json.load(fd)
+    else:
+        with open(filename, "r") as fd:
+            strings = fd.readline().split("|")
+        raw_entries = dict()
+        for item in strings:
+            key, value = item.strip().split("=")
+            raw_entries[key] = value
 
     entry = Entry(**raw_entries)
     for key, value in entry.attributes.items():
@@ -107,6 +115,8 @@ def _read_json(filename):
         if hasattr(KJ, key):
             cls = getattr(KJ, key)
             if cls.status == "deprecated":
+                continue
+            if value is None:   # None value can also occur
                 continue
             if cls.ptype in (float, int, str):
                 assert isinstance(value, cls.ptype)
@@ -116,8 +126,22 @@ def _read_json(filename):
         else:
             print(key, value, "Not recognized")
 
+
+
 def test_auto_load():
+    """Test on all example files downloaded from AFLOW 
+       catalog: ICSD, LIB1 ~ LIB6
+    """
+    # Use aflowlib.json format
     for fname in sample_dir.glob("*.json"):
         print(fname)
-        _read_json(fname)
+        _read_file(fname, format="json")
+
+    # Use aflowlib.out format
+    for fname in sample_dir.glob("*.out"):
+        print(fname)
+        _read_file(fname, format="out")
+
+if __name__ == '__main__':
+    test_auto_load()
 
