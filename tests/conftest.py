@@ -1,4 +1,6 @@
 import pytest
+from pathlib import Path
+curdir = Path(__file__).parent
 
 @pytest.fixture
 def paper():
@@ -17,11 +19,11 @@ def paper():
     result._N = 912
     
     n = -1
-    with open("tests/data0.json") as f:
+    with open(curdir / "data0.json") as f:
         response = json.loads(f.read())
         result.responses[n] = response
     n = -2
-    with open("tests/data1.json") as f:
+    with open(curdir / "data1.json") as f:
         response = json.loads(f.read())
         result.responses[n] = response
 
